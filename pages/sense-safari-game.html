@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Sense Safari — Explore. Discover. Play.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/safari.css">
+</head>
+<body>
+<div id="bgScene" aria-hidden="true"></div>
+<div class="vine-left" aria-hidden="true"></div>
+<div class="vine-right" aria-hidden="true"></div>
+
+<div class="app" id="main">
+  <section id="screen-menu" class="screen active">
+    <div class="menu-hero">
+      <div class="hero-eyebrow"><span class="pulse-dot"></span> CHAPTER 2 &middot; THE SENSE WORLD</div>
+      <div class="hero-icon-wrap">
+        <div class="hero-ring"></div>
+        <div class="hero-ring"></div>
+        <div class="hero-ring"></div>
+        <div class="hero-icon">🌿</div>
+      </div>
+      <h1 class="hero-title">SENSE SAFARI</h1>
+      <p class="hero-subtitle">Explore &middot; Discover &middot; Play</p>
+      <div class="player-strip">
+        <div class="gp-chip">🗺️ <span id="menuLevelLabel">Level 1 — Jungle Scout</span></div>
+        <div class="gp-chip">⭐ Score: <span id="menuScoreLabel">0</span></div>
+        <div class="gp-chip">🏅 <span id="menuBadgeLabel">0 / 5 Badges</span></div>
+      </div>
+    </div>
+
+    <div class="game-cards">
+      <a class="game-card" href="poem.html">
+        <div class="gc-visual"><div class="big-emoji">📝</div></div>
+        <div class="gc-body">
+          <h3>Poem Blaster</h3>
+          <p>Shoot the correct word to fill the sense organ poems!</p>
+          <div class="gc-footer">
+            <span class="gc-tag easy">Beginner</span>
+            <span class="gc-play">Play <span class="gc-play-arrow">→</span></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="game-card" href="crossword.html">
+        <div class="gc-visual"><div class="big-emoji">🧩</div></div>
+        <div class="gc-body">
+          <h3>Sense Crossword</h3>
+          <p>Solve the crossword puzzle using pictures as clues!</p>
+          <div class="gc-footer">
+            <span class="gc-tag medium">Intermediate</span>
+            <span class="gc-play">Play <span class="gc-play-arrow">→</span></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="game-card" href="odd.html">
+        <div class="gc-visual"><div class="big-emoji">🔍</div></div>
+        <div class="gc-body">
+          <h3>Odd One Out</h3>
+          <p>Aim and hit the thing that doesn't belong in each group!</p>
+          <div class="gc-footer">
+            <span class="gc-tag hard">Challenge</span>
+            <span class="gc-play">Play <span class="gc-play-arrow">→</span></span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+</div>
+
+<div class="float-banner" id="floatBanner"></div>
+
+<script>
+function createParticles() {
+  const colors = ['#2ecc71','#f1c40f','#ff6b6b','#87ceeb','#ff8fb1'];
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.width = p.style.height = (4 + Math.random() * 8) + 'px';
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    document.body.appendChild(p);
+  }
+}
+createParticles();
+
+try {
+  const xp = parseInt(sessionStorage.getItem('safariXP') || '0', 10);
+  document.getElementById('menuScoreLabel').textContent = xp;
+} catch (e) {}
+</script>
+</body>
+</html>

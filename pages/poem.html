@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Poem Blaster — Sense Safari</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/safari.css">
+</head>
+<body>
+<div id="bgScene" aria-hidden="true"></div>
+<div class="vine-left" aria-hidden="true"></div>
+<div class="vine-right" aria-hidden="true"></div>
+
+<div class="app" id="main">
+  <section class="screen active" style="height:100vh;overflow:hidden;">
+    <div class="gp-hud">
+      <div class="side"><button class="gp-back" data-back>Menu</button></div>
+      <div class="side">
+        <div class="gp-chip score-chip">⭐ <span id="poemScore">0</span></div>
+        <div class="gp-chip combo-chip">🔥 <span id="poemCombo">x0</span></div>
+      </div>
+      <div class="side"><button class="sound-toggle" data-sound-toggle>🔊</button></div>
+    </div>
+    <div class="game-wrap">
+      <div class="game-title-row"><h2>🎯 Poem Blaster</h2><p>Shoot the correct word to fill the poem!</p></div>
+      <div class="poem-progress" id="poemProgress"></div>
+      <div class="poem-container" id="poemGameArea">
+        <div class="poem-stars"></div>
+        <div class="poem-hud">
+          <div class="poem-level-card" id="poemInstruction">🎯 SHOOT WORD FOR SLOT #1</div>
+          <div class="poem-score-card">⭐ <span id="poemGameScore">0</span></div>
+        </div>
+        <div class="poem-board" id="poemBoard"></div>
+        <div class="poem-slingshot" id="poemSlingshot">
+          <div class="poem-slingshot-base">
+            <div class="poem-slingshot-fork-l"></div>
+            <div class="poem-slingshot-fork-r"></div>
+          </div>
+        </div>
+        <div class="poem-laser" id="poemLaser"></div>
+        <div class="poem-aim-line" id="poemAimLine"></div>
+        <div class="poem-target-marker" id="poemTargetMarker"></div>
+        <div class="poem-asteroids" id="poemAsteroids"></div>
+        <div class="poem-message" id="poemMessage"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="float-banner" id="floatBanner"></div>
+
+<script src="../js/safari-common.js"></script>
+<script src="../js/poem.js"></script>
+</body>
+</html>

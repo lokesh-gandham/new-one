@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sense Organs Poem Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="theme-container">
+        <div class="stars"></div>
+        <div class="header-banner">
+            <span class="subject science">SCIENCE</span>
+            <span class="subject technology">TECHNOLOGY</span>
+            <span class="subject engineering">ENGINEERING</span>
+            <span class="subject arts">ARTS</span>
+            <span class="subject math">MATHEMATICS</span>
+        </div>
+        <div class="theme-card">
+            <div class="theme-icon">🔬</div>
+            <h1>Science : Spot and Classify</h1>
+            <div class="theme-badge">
+                <span class="badge thinking">🧠 Critical Thinking</span>
+                <span class="badge creativity">🎨 Creativity</span>
+            </div>
+            <p class="theme-description">
+                Write a poem using the given prompts to describe the functions of your sense organs.
+            </p>
+            <div class="senses-preview">
+                <div class="sense-item">👃 Nose - Smell</div>
+                <div class="sense-item">👁️ Eyes - See</div>
+                <div class="sense-item">👂 Ears - Hear</div>
+                <div class="sense-item">👅 Tongue - Taste</div>
+                <div class="sense-item">✋ Skin - Feel</div>
+            </div>
+            <button class="play-button" onclick="startGame()">
+                ▶ PLAY GAME
+            </button>
+        </div>
+    </div>
+    <script>
+        function startGame() {
+            window.location.href = 'pages/sense-safari-game.html';
+        }
+    </script>
+</body>
+</html>

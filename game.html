@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sense Organs Poem Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="game-badge">Science : Spot and Classify</div>
+            <div class="score">Score: <span id="score">0</span></div>
+        </div>
+
+        <div class="poem-section">
+            <div class="poem-card">
+                <h2>1) Nose</h2>
+                <div class="poem-line">
+                    <span>I have a</span>
+                    <div class="blank-slot" data-blank="1" data-answer="nose">
+                        <span class="blank-text"></span>
+                    </div>
+                    <span>to smell,</span>
+                </div>
+                <div class="poem-line">
+                    <span>The rain and</span>
+                    <div class="blank-slot" data-blank="2" data-answer="flowers">
+                        <span class="blank-text"></span>
+                    </div>
+                    <span>as well.</span>
+                </div>
+                <div class="poem-line">
+                    <span>I</span>
+                    <div class="blank-slot" data-blank="3" data-answer="smell">
+                        <span class="blank-text"></span>
+                    </div>
+                    <span>the food so nice,</span>
+                </div>
+                <div class="poem-line">
+                    <span>And the air,</span>
+                    <div class="blank-slot" data-blank="4" data-answer="fresh">
+                        <span class="blank-text"></span>
+                    </div>
+                    <span>and hasty.</span>
+                </div>
+            </div>
+            <div class="word-bank" id="bank1">
+                <div class="word-chip" draggable="true" data-word="smell">smell</div>
+                <div class="word-chip" draggable="true" data-word="fresh">fresh</div>
+                <div class="word-chip" draggable="true" data-word="nose">nose</div>
+                <div class="word-chip" draggable="true" data-word="flowers">flowers</div>
+            </div>
+        </div>
+
+        <div class="poem-section">
+            <div class="poem-card">
+                <h2>2) Eyes</h2>
+                <div class="poem-line">
+                    <span>I have two eyes to</span>
+                    <div class="blank-slot" data-blank="5" data-answer="see">
+                        <span class="blank-text"></span>
+                    </div>
+                    <span>,</span>
+                </div>
+                <div class="poem-line">
+                    <span>The</span>
+                    <div class="blank-slot" data-blank="6" data-answer="birds">
+                        <span class="blank-text"></span>
+                    </div>
+                    <span>, the flowers, and the tree.</span>
+                </div>
+                <div class="poem-line">
+                    <span>I look at the</span>
+                    <div class="blank-slot" data-blank="7" data-answer="Sun">
+                        <span class="blank-text"></span>
+                    </div>
+                    <span>, so bright,</span>
+                </div>
+                <div class="poem-line">
+                    <span>And the stars that shine at</span>
+                    <div class="blank-slot" data-blank="8" data-answer="night">
+                        <span class="blank-text"></span>
+                    </div>
+                    <span>!</span>
+                </div>
+            </div>
+            <div class="word-bank" id="bank2">
+                <div class="word-chip" draggable="true" data-word="birds">birds</div>
+                <div class="word-chip" draggable="true" data-word="night">night</div>
+                <div class="word-chip" draggable="true" data-word="see">see</div>
+                <div class="word-chip" draggable="true" data-word="Sun">Sun</div>
+            </div>
+        </div>
+
+        <div class="game-controls">
+            <button class="check-button" onclick="checkAnswers()">Check Answers</button>
+            <button class="reset-button" onclick="resetGame()">Reset</button>
+        </div>
+
+        <div class="result-message" id="resultMessage"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+/* ========== GAME 1: POEM BLASTER (SHOOTING STYLE) ========== */
+const poemLevels = [
+  { title: 'Mission 1: The Smelling Poem', icon: '👃', sense: 'nose',
+    answers: ['nose','flowers','smell','fresh'],
+    lines: [
+      ['I have a ', '<BLANK>', ' to smell,'],
+      ['The rain and ', '<BLANK>', ' as well.'],
+      ['I ', '<BLANK>', ' the food so nice,'],
+      ['And the air, ', '<BLANK>', ' and hasty.']
+    ]},
+  { title: 'Mission 2: The Seeing Poem', icon: '👁️', sense: 'eyes',
+    answers: ['see','birds','Sun','night'],
+    lines: [
+      ['I have two eyes to ', '<BLANK>', ','],
+      ['The ', '<BLANK>', ', the flowers, and the tree.'],
+      ['I look at the ', '<BLANK>', ', so bright,'],
+      ['And the stars that shine at ', '<BLANK>', '!']
+    ]}
+];
+
+let poemState = { current: 0, filled: [], currentSlot: 0, isFiring: false };
+
+function initPoemGame() {
+  poemState = { current: 0, filled: [], currentSlot: 0, isFiring: false };
+  renderPoemLevel(0);
+  updatePoemProgress();
+}
+
+function renderPoemLevel(li) {
+  const lvl = poemLevels[li];
+  const board = document.getElementById('poemBoard');
+  const asteroids = document.getElementById('poemAsteroids');
+  
+  poemState.filled = Array(lvl.answers.length).fill(null);
+  poemState.currentSlot = 0;
+  poemState.isFiring = false;
+  
+  let boardHtml = `<div class="poem-board-title">${lvl.icon} ${lvl.title}</div>`;
+  lvl.lines.forEach((line, i) => {
+    boardHtml += `<div class="poem-line">${line[0]}<span class="poem-blank-slot${i === 0 ? ' active' : ''}" id="poemSlot${i}">?</span>${line[2]}</div>`;
+  });
+  board.innerHTML = boardHtml;
+  
+  const allWords = shuffle([...lvl.answers, ...getDistractors(lvl.answers)]);
+  asteroids.innerHTML = '';
+  
+  const positions = [
+    { left: '55%', top: '14%' },
+    { left: '72%', top: '26%' },
+    { left: '57%', top: '38%' },
+    { left: '74%', top: '50%' },
+    { left: '60%', top: '64%' },
+    { left: '76%', top: '16%' },
+    { left: '58%', top: '52%' },
+    { left: '78%', top: '38%' }
+  ];
+  
+  allWords.forEach((word, i) => {
+    const pos = positions[i % positions.length];
+    const ast = document.createElement('div');
+    ast.className = 'poem-asteroid';
+    ast.style.left = pos.left;
+    ast.style.top = pos.top;
+    ast.textContent = word;
+    ast.onclick = () => shootPoemAsteroid(ast, word);
+    asteroids.appendChild(ast);
+  });
+  
+  document.getElementById('poemInstruction').textContent = `🎯 SHOOT WORD FOR SLOT #1`;
+  document.getElementById('poemGameScore').textContent = G.score;
+  
+  setupPoemAimLine();
+}
+
+function getDistractors(answers) {
+  const extras = ['tree','wind','rain','sun','moon','sky','bird','fish','leaf','rock','wave','cloud'];
+  return shuffle(extras).slice(0, 4);
+}
+
+function setupPoemAimLine() {
+  const area = document.getElementById('poemGameArea');
+  const aimLine = document.getElementById('poemAimLine');
+  
+  area.onmousemove = (e) => {
+    if (poemState.isFiring) return;
+    const rect = area.getBoundingClientRect();
+    let mouseX = e.clientX - rect.left;
+    if (mouseX < 30) mouseX = 30;
+    
+    aimLine.style.left = mouseX + 'px';
+    aimLine.style.top = '60px';
+    aimLine.style.height = (520 - 60 - 50) + 'px';
+  };
+}
+
+function shootPoemAsteroid(asteroidEl, word) {
+  if (poemState.isFiring || poemState.currentSlot >= poemLevels[poemState.current].answers.length) return;
+  poemState.isFiring = true;
+  playSound('shoot');
+  
+  const area = document.getElementById('poemGameArea');
+  const areaRect = area.getBoundingClientRect();
+  const astRect = asteroidEl.getBoundingClientRect();
+  
+  const targetX = (astRect.left + astRect.width / 2) - areaRect.left;
+  const targetY = (astRect.top + astRect.height / 2) - areaRect.top;
+  
+  const laser = document.getElementById('poemLaser');
+  const marker = document.getElementById('poemTargetMarker');
+  const slingshot = document.getElementById('poemSlingshot');
+  
+  slingshot.style.left = (targetX - 20) + 'px';
+  
+  marker.style.left = targetX + 'px';
+  marker.style.top = targetY + 'px';
+  marker.style.display = 'block';
+  
+  const shipTopY = 520 - 55;
+  const laserHeight = shipTopY - targetY;
+  laser.style.left = (targetX - 2) + 'px';
+  laser.style.top = targetY + 'px';
+  laser.style.height = laserHeight + 'px';
+  laser.style.display = 'block';
+  
+  setTimeout(() => {
+    laser.style.display = 'none';
+    marker.style.display = 'none';
+    poemState.isFiring = false;
+    
+    const lvl = poemLevels[poemState.current];
+    const correctWord = lvl.answers[poemState.currentSlot];
+    
+    if (word.toLowerCase() === correctWord.toLowerCase()) {
+      const slot = document.getElementById('poemSlot' + poemState.currentSlot);
+      slot.textContent = word;
+      slot.classList.remove('active');
+      slot.classList.add('correct');
+      poemState.filled[poemState.currentSlot] = word;
+      
+      asteroidEl.style.display = 'none';
+      addScore(100);
+      playSound('correct');
+      document.getElementById('poemGameScore').textContent = G.score;
+      showPoemMessage(`⚡ "${word.toUpperCase()}" SLOTTED!`);
+      
+      poemState.currentSlot++;
+      
+      if (poemState.currentSlot < lvl.answers.length) {
+        document.getElementById('poemSlot' + poemState.currentSlot).classList.add('active');
+        document.getElementById('poemInstruction').textContent = `🎯 SHOOT WORD FOR SLOT #${poemState.currentSlot + 1}`;
+      } else {
+        document.getElementById('poemInstruction').textContent = '🏆 MISSION COMPLETE!';
+        setTimeout(() => checkPoemLevelComplete(poemState.current), 1000);
+      }
+    } else {
+      wrongAnswer();
+      playSound('wrong');
+      showPoemMessage('❌ WRONG WORD FOR THIS SLOT!');
+    }
+  }, 250);
+}
+
+function showPoemMessage(text) {
+  const msg = document.getElementById('poemMessage');
+  msg.textContent = text;
+  msg.style.display = 'block';
+  setTimeout(() => { msg.style.display = 'none'; }, 1400);
+}
+
+function checkPoemLevelComplete(li) {
+  if (poemState.currentSlot >= poemLevels[li].answers.length) {
+    if (li === poemLevels.length - 1) {
+      showBanner('🏆 Poem Blaster Complete!', 'achieve');
+      setTimeout(() => {
+        showResult('🎯', 'Poem Blaster Complete!', G.score, G.totalXP, G.bestCombo);
+      }, 2000);
+    } else {
+      showBanner('🎉 Mission Complete!', 'achieve');
+      poemState.current = li + 1;
+      renderPoemLevel(li + 1);
+      updatePoemProgress();
+    }
+  }
+}
+
+function updatePoemProgress() {
+  const row = document.getElementById('poemProgress');
+  row.innerHTML = '';
+  for (let i = 0; i < poemLevels.length; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'poem-dot';
+    if (i < poemState.current) dot.classList.add('done');
+    else if (i === poemState.current) dot.classList.add('current');
+    row.appendChild(dot);
+  }
+}
+
+function resetPoemGame() {
+  poemState = { current: 0, filled: [], currentSlot: 0, isFiring: false };
+}
+
+initPoemGame();

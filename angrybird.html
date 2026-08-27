@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Angry Birds: Word Quest!</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Impact', 'Comic Sans MS', sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background-color: #1a0b2e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Game Screen Frame */
+    .game-container {
+      position: relative;
+      width: 800px;
+      height: 480px;
+      border: 6px solid #4a2d00;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.8);
+      overflow: hidden;
+      background: linear-gradient(180deg, #4facfe 0%, #00f2fe 65%, #38ef7d 65%, #11998e 100%);
+    }
+
+    /* HUD Header */
+    .hud {
+      position: absolute;
+      top: 15px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .level-card {
+      background: rgba(0, 0, 0, 0.7);
+      border: 3px solid #ffcc00;
+      border-radius: 12px;
+      padding: 8px 16px;
+      color: #fff;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+    }
+
+    .score-card {
+      background: #ffcc00;
+      color: #000;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 1.3rem;
+      border: 3px solid #fff;
+    }
+
+    /* Slingshot Structure */
+    .slingshot {
+      position: absolute;
+      left: 110px;
+      bottom: 60px;
+      width: 16px;
+      height: 140px;
+      background: #653818;
+      border-radius: 8px;
+      z-index: 2;
+    }
+
+    .slingshot::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -20px;
+      width: 20px;
+      height: 45px;
+      background: #42220c;
+      transform: rotate(-30deg);
+      border-radius: 5px;
+    }
+
+    .slingshot::after {
+      content: '';
+      position: absolute;
+      top: -10px;
+      right: -20px;
+      width: 20px;
+      height: 45px;
+      background: #42220c;
+      transform: rotate(30deg);
+      border-radius: 5px;
+    }
+
+    /* Slingshot Rubber Straps */
+    .band {
+      position: absolute;
+      height: 6px;
+      background: #2b1100;
+      z-index: 4;
+      transform-origin: left center;
+      pointer-events: none;
+    }
+
+    /* Aiming Trajectory Dots */
+    .trajectory-dot {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #ffcc00;
+      border: 2px solid #000;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 3;
+      display: none;
+    }
+
+    /* The Bird (Projectile) */
+    .bird {
+      position: absolute;
+      width: 44px;
+      height: 44px;
+      background: #ff2a2a;
+      border: 3px solid #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: grab;
+      z-index: 5;
+      box-shadow: inset -4px -4px 0 rgba(0,0,0,0.3);
+    }
+
+    .bird:active {
+      cursor: grabbing;
+    }
+
+    /* Target Word Crates */
+    .target-crate {
+      position: absolute;
+      width: 100px;
+      height: 60px;
+      background: #d4a373;
+      border: 4px solid #582f0e;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3a1500;
+      font-size: 1.2rem;
+      font-weight: bold;
+      box-shadow: 4px 6px 0px rgba(0,0,0,0.3);
+      z-index: 3;
+    }
+
+    /* Feedback Banner */
+    .message-pop {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.85);
+      border: 4px solid #ffcc00;
+      color: #ffcc00;
+      padding: 15px 30px;
+      border-radius: 20px;
+      font-size: 2rem;
+      text-align: center;
+      display: none;
+      z-index: 20;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-container" id="game-area">
+    <!-- HUD -->
+    <div class="hud">
+      <div class="level-card" id="instruction">🎯 LAUNCH BIRD AT: "SMELL"</div>
+      <div class="score-card">SCORE: <span id="score">0</span></div>
+    </div>
+
+    <!-- Rubber Straps -->
+    <div class="band" id="band-left"></div>
+    <div class="band" id="band-right"></div>
+
+    <!-- Slingshot Base -->
+    <div class="slingshot"></div>
+
+    <!-- The Angry Bird -->
+    <div class="bird" id="bird">😡</div>
+
+    <!-- Word Crates (Targets) -->
+    <div class="target-crate" id="crate1" style="right: 80px; bottom: 240px;">FLOWERS</div>
+    <div class="target-crate" id="crate2" style="right: 80px; bottom: 150px;">PENCIL</div>
+    <div class="target-crate" id="crate3" style="right: 80px; bottom: 60px;">BELL</div>
+
+    <!-- Pop Up Banner -->
+    <div class="message-pop" id="message-box">BOOM! DIRECT HIT! 💥</div>
+  </div>
+
+  <script>
+    const bird = document.getElementById('bird');
+    const gameArea = document.getElementById('game-area');
+    const messageBox = document.getElementById('message-box');
+    const scoreEl = document.getElementById('score');
+    const bandLeft = document.getElementById('band-left');
+    const bandRight = document.getElementById('band-right');
+
+    const anchorX = 96;
+    const anchorY = 280;
+
+    let isDragging = false;
+    let birdX = anchorX;
+    let birdY = anchorY;
+
+    let velocityX = 0;
+    let velocityY = 0;
+    let isFlying = false;
+    let score = 0;
+
+    // Create 12 Trajectory Marker Dots
+    const trajectoryDots = [];
+    for (let i = 0; i < 12; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'trajectory-dot';
+      gameArea.appendChild(dot);
+      trajectoryDots.push(dot);
+    }
+
+    function resetBird() {
+      birdX = anchorX;
+      birdY = anchorY;
+      velocityX = 0;
+      velocityY = 0;
+      isFlying = false;
+      bird.style.left = birdX + 'px';
+      bird.style.top = birdY + 'px';
+      updateBands();
+      hideTrajectory();
+    }
+
+    function updateBands() {
+      if (isFlying) {
+        bandLeft.style.display = 'none';
+        bandRight.style.display = 'none';
+        return;
+      }
+
+      bandLeft.style.display = 'block';
+      bandRight.style.display = 'block';
+
+      const leftForkX = 95;
+      const leftForkY = 270;
+      const rightForkX = 135;
+      const rightForkY = 270;
+
+      const bCenterX = birdX + 22;
+      const bCenterY = birdY + 22;
+
+      const dX1 = bCenterX - leftForkX;
+      const dY1 = bCenterY - leftForkY;
+      const len1 = Math.sqrt(dX1 * dX1 + dY1 * dY1);
+      const angle1 = Math.atan2(dY1, dX1) * (180 / Math.PI);
+
+      bandLeft.style.left = leftForkX + 'px';
+      bandLeft.style.top = leftForkY + 'px';
+      bandLeft.style.width = len1 + 'px';
+      bandLeft.style.transform = `rotate(${angle1}deg)`;
+
+      const dX2 = bCenterX - rightForkX;
+      const dY2 = bCenterY - rightForkY;
+      const len2 = Math.sqrt(dX2 * dX2 + dY2 * dY2);
+      const angle2 = Math.atan2(dY2, dX2) * (180 / Math.PI);
+
+      bandRight.style.left = rightForkX + 'px';
+      bandRight.style.top = rightForkY + 'px';
+      bandRight.style.width = len2 + 'px';
+      bandRight.style.transform = `rotate(${angle2}deg)`;
+    }
+
+    // Update Aim Trajectory Marker
+    function drawTrajectory(simVX, simVY) {
+      let simX = birdX + 22;
+      let simY = birdY + 22;
+      let currVX = simVX;
+      let currVY = simVY;
+
+      trajectoryDots.forEach((dot, index) => {
+        simX += currVX * 1.5;
+        simY += currVY * 1.5;
+        currVY += 0.8 * 1.5; // Simulating gravity
+
+        dot.style.left = (simX - 5) + 'px';
+        dot.style.top = (simY - 5) + 'px';
+        dot.style.display = 'block';
+      });
+    }
+
+    function hideTrajectory() {
+      trajectoryDots.forEach(dot => dot.style.display = 'none');
+    }
+
+    resetBird();
+
+    bird.addEventListener('mousedown', startDrag);
+    window.addEventListener('mousemove', drag);
+    window.addEventListener('mouseup', endDrag);
+
+    bird.addEventListener('touchstart', startDrag);
+    window.addEventListener('touchmove', drag);
+    window.addEventListener('touchend', endDrag);
+
+    function startDrag(e) {
+      if (isFlying) return;
+      isDragging = true;
+    }
+
+    function drag(e) {
+      if (!isDragging) return;
+
+      const rect = gameArea.getBoundingClientRect();
+      const pageX = e.touches ? e.touches[0].clientX : e.clientX;
+      const pageY = e.touches ? e.touches[0].clientY : e.clientY;
+
+      let mouseX = pageX - rect.left - 22;
+      let mouseY = pageY - rect.top - 22;
+
+      let dx = mouseX - anchorX;
+      let dy = mouseY - anchorY;
+      let distance = Math.sqrt(dx * dx + dy * dy);
+
+      const maxPull = 90;
+      if (distance > maxPull) {
+        let angle = Math.atan2(dy, dx);
+        mouseX = anchorX + Math.cos(angle) * maxPull;
+        mouseY = anchorY + Math.sin(angle) * maxPull;
+      }
+
+      birdX = mouseX;
+      birdY = mouseY;
+      bird.style.left = birdX + 'px';
+      bird.style.top = birdY + 'px';
+
+      updateBands();
+
+      // Live trajectory marker calculation
+      let launchVX = (anchorX - birdX) * 0.28;
+      let launchVY = (anchorY - birdY) * 0.28;
+      drawTrajectory(launchVX, launchVY);
+    }
+
+    function endDrag() {
+      if (!isDragging) return;
+      isDragging = false;
+      isFlying = true;
+
+      let dx = anchorX - birdX;
+      let dy = anchorY - birdY;
+
+      velocityX = dx * 0.28;
+      velocityY = dy * 0.28;
+
+      updateBands();
+      hideTrajectory();
+      gameLoop();
+    }
+
+    function gameLoop() {
+      if (!isFlying) return;
+
+      birdX += velocityX;
+      birdY += velocityY;
+      velocityY += 0.8;
+
+      bird.style.left = birdX + 'px';
+      bird.style.top = birdY + 'px';
+
+      checkCollisions();
+
+      if (birdX > 800 || birdY > 480 || birdX < 0) {
+        resetBird();
+        return;
+      }
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    function checkCollisions() {
+      const crates = [
+        { el: document.getElementById('crate1'), target: true },
+        { el: document.getElementById('crate2'), target: false },
+        { el: document.getElementById('crate3'), target: false }
+      ];
+
+      crates.forEach(crate => {
+        if (crate.el.style.display === "none") return;
+
+        let rect = crate.el.getBoundingClientRect();
+        let birdRect = bird.getBoundingClientRect();
+
+        if (!(birdRect.right < rect.left || 
+              birdRect.left > rect.right || 
+              birdRect.bottom < rect.top || 
+              birdRect.top > rect.bottom)) {
+
+          if (crate.target) {
+            score += 100;
+            scoreEl.innerText = score;
+            showMessage("💥 BOOM! DIRECT HIT!");
+            crate.el.style.display = "none";
+          } else {
+            showMessage("❌ WRONG TARGET!");
+          }
+
+          resetBird();
+        }
+      });
+    }
+
+    function showMessage(text) {
+      messageBox.innerText = text;
+      messageBox.style.display = "block";
+      setTimeout(() => {
+        messageBox.style.display = "none";
+      }, 1500);
+    }
+  </script>
+</body>
+</html>

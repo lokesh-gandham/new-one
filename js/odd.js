@@ -517,29 +517,23 @@ function drawTargets(ctx) {
     ctx.arc(0, 0, t.radius, 0, Math.PI * 2);
     ctx.stroke();
 
-    ctx.font = '48px serif';
+    ctx.font = '42px serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(t.emoji, 0, -2);
+    ctx.fillText(t.emoji, 0, -6);
 
-    ctx.fillStyle = 'rgba(10,26,15,0.85)';
+    ctx.fillStyle = 'rgba(10,26,15,0.7)';
     var tw = ctx.measureText(t.label).width;
-    var boxW = tw + 20;
-    var boxH = 26;
+    var boxW = tw + 16;
+    var boxH = 18;
     var boxX = -boxW / 2;
-    var boxY = t.radius + 10;
+    var boxY = t.radius - 22;
     ctx.beginPath();
-    ctx.roundRect(boxX, boxY, boxW, boxH, 6);
+    ctx.roundRect(boxX, boxY, boxW, boxH, 4);
     ctx.fill();
 
-    ctx.strokeStyle = 'rgba(46,204,113,0.5)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.roundRect(boxX, boxY, boxW, boxH, 6);
-    ctx.stroke();
-
     ctx.fillStyle = '#f5f5dc';
-    ctx.font = 'bold 14px Fredoka, Arial';
+    ctx.font = 'bold 11px Fredoka, Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(t.label, 0, boxY + boxH / 2);

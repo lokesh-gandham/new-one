@@ -14,7 +14,7 @@
 <div class="vine-right" aria-hidden="true"></div>
 
 <div class="app" id="main">
-  <section class="screen active" style="height:100vh;overflow:hidden;">
+  <section class="screen active game-screen">
     <div class="gp-hud">
       <div class="side"><button class="gp-back" data-back>Menu</button></div>
       <div class="side">
@@ -32,18 +32,20 @@
           <div class="poem-level-card" id="poemInstruction">🎯 SHOOT WORD FOR SLOT #1</div>
           <div class="poem-score-card">⭐ <span id="poemGameScore">0</span></div>
         </div>
-        <div class="poem-board" id="poemBoard"></div>
-        <div class="poem-slingshot" id="poemSlingshot">
-          <div class="poem-slingshot-base">
-            <div class="poem-slingshot-fork-l"></div>
-            <div class="poem-slingshot-fork-r"></div>
+        <div class="poem-play" id="poemPlay">
+          <div class="poem-board" id="poemBoard"></div>
+          <div class="poem-slingshot" id="poemSlingshot">
+            <div class="poem-slingshot-base">
+              <div class="poem-slingshot-fork-l"></div>
+              <div class="poem-slingshot-fork-r"></div>
+            </div>
           </div>
+          <div class="poem-laser" id="poemLaser"></div>
+          <div class="poem-aim-line" id="poemAimLine"></div>
+          <div class="poem-target-marker" id="poemTargetMarker"></div>
+          <div class="poem-asteroids" id="poemAsteroids"></div>
+          <div class="poem-message" id="poemMessage"></div>
         </div>
-        <div class="poem-laser" id="poemLaser"></div>
-        <div class="poem-aim-line" id="poemAimLine"></div>
-        <div class="poem-target-marker" id="poemTargetMarker"></div>
-        <div class="poem-asteroids" id="poemAsteroids"></div>
-        <div class="poem-message" id="poemMessage"></div>
       </div>
     </div>
   </section>

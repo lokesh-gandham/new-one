@@ -37,7 +37,7 @@ function renderPoemLevel(li) {
   
   let boardHtml = `<div class="poem-board-title">${lvl.icon} ${lvl.title}</div>`;
   lvl.lines.forEach((line, i) => {
-    boardHtml += `<div class="poem-line">${line[0]}<span class="poem-blank-slot${i === 0 ? ' active' : ''}" id="poemSlot${i}">?</span>${line[2]}</div>`;
+    boardHtml += `<div class="poem-line"><span>${line[0]}</span><span class="poem-blank-slot${i === 0 ? ' active' : ''}" id="poemSlot${i}">?</span><span>${line[2]}</span></div>`;
   });
   board.innerHTML = boardHtml;
   
@@ -45,14 +45,14 @@ function renderPoemLevel(li) {
   asteroids.innerHTML = '';
   
   const positions = [
-    { left: '55%', top: '14%' },
-    { left: '72%', top: '26%' },
-    { left: '57%', top: '38%' },
-    { left: '74%', top: '50%' },
-    { left: '60%', top: '64%' },
-    { left: '76%', top: '16%' },
-    { left: '58%', top: '52%' },
-    { left: '78%', top: '38%' }
+    { left: '62%', top: '10%' },
+    { left: '80%', top: '22%' },
+    { left: '64%', top: '34%' },
+    { left: '82%', top: '46%' },
+    { left: '66%', top: '60%' },
+    { left: '84%', top: '12%' },
+    { left: '68%', top: '48%' },
+    { left: '86%', top: '34%' }
   ];
   
   allWords.forEach((word, i) => {
@@ -77,19 +77,28 @@ function getDistractors(answers) {
   return shuffle(extras).slice(0, 4);
 }
 
+function getPoemPlayArea() {
+  return document.getElementById('poemPlay') || document.getElementById('poemGameArea');
+}
+
 function setupPoemAimLine() {
-  const area = document.getElementById('poemGameArea');
+  const area = getPoemPlayArea();
   const aimLine = document.getElementById('poemAimLine');
-  
+  const slingshot = document.getElementById('poemSlingshot');
+
   area.onmousemove = (e) => {
     if (poemState.isFiring) return;
     const rect = area.getBoundingClientRect();
+    const slingW = slingshot.offsetWidth || 40;
     let mouseX = e.clientX - rect.left;
-    if (mouseX < 30) mouseX = 30;
-    
+    mouseX = Math.max(slingW / 2, Math.min(rect.width - slingW / 2, mouseX));
+
     aimLine.style.left = mouseX + 'px';
-    aimLine.style.top = '60px';
-    aimLine.style.height = (520 - 60 - 50) + 'px';
+    aimLine.style.top = '8px';
+    aimLine.style.height = Math.max(80, rect.height - 58) + 'px';
+
+    slingshot.style.left = mouseX + 'px';
+    slingshot.style.transform = 'translateX(-50%)';
   };
 }
 
@@ -98,7 +107,7 @@ function shootPoemAsteroid(asteroidEl, word) {
   poemState.isFiring = true;
   playSound('shoot');
   
-  const area = document.getElementById('poemGameArea');
+  const area = getPoemPlayArea();
   const areaRect = area.getBoundingClientRect();
   const astRect = asteroidEl.getBoundingClientRect();
   
@@ -109,13 +118,14 @@ function shootPoemAsteroid(asteroidEl, word) {
   const marker = document.getElementById('poemTargetMarker');
   const slingshot = document.getElementById('poemSlingshot');
   
-  slingshot.style.left = (targetX - 20) + 'px';
+  slingshot.style.left = targetX + 'px';
+  slingshot.style.transform = 'translateX(-50%)';
   
   marker.style.left = targetX + 'px';
   marker.style.top = targetY + 'px';
   marker.style.display = 'block';
   
-  const shipTopY = 520 - 55;
+  const shipTopY = areaRect.height - 55;
   const laserHeight = shipTopY - targetY;
   laser.style.left = (targetX - 2) + 'px';
   laser.style.top = targetY + 'px';

@@ -30,7 +30,7 @@ function initCrosswordGame() {
 
 function renderCrossword() {
   const stage = document.getElementById('crosswordStage');
-  let html = '<div style="display:flex;justify-content:center;"><div class="crossword-grid" style="grid-template-columns:repeat(6,48px);">';
+  let html = '<div class="crossword-layout"><div class="crossword-grid-wrap"><div class="crossword-grid">';
   
   for (let r = 0; r < 6; r++) {
     for (let c = 0; c < 6; c++) {
@@ -52,8 +52,8 @@ function renderCrossword() {
     html += `<div class="clue-item" data-idx="${i}" onclick="selectCrossClue(${i})">${w.emoji} ${w.clue} (${w.word.length} letters)</div>`;
   });
   
-  html += '</div></div>';
-  html += '<div style="text-align:center;margin-top:16px;"><button class="btn btn-leaf" onclick="checkCrossword()">Check Crossword ✓</button></div>';
+  html += '</div></div></div>';
+  html += '<div class="crossword-actions"><button class="btn btn-leaf" onclick="checkCrossword()">Check Crossword ✓</button></div>';
   stage.innerHTML = html;
   
   document.getElementById('crossCount').textContent = crossState.solved + '/' + crosswordWords.length + ' Words';

@@ -142,7 +142,8 @@ function showOddPopup(text, type) {
   el.textContent = text;
   el.className = 'odd-result-popup ' + (type || '') + ' show';
   clearTimeout(el._timer);
-  el._timer = setTimeout(function() { el.className = 'odd-result-popup'; }, 2000);
+  var dur = type === 'wrong' ? 1200 : 2000;
+  el._timer = setTimeout(function() { el.className = 'odd-result-popup'; }, dur);
 }
 
 function loadOddLevel() {

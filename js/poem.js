@@ -222,7 +222,7 @@ function shootPoemAsteroid(asteroidEl, word) {
       wrongAnswer();
       playSound('wrong');
       speak('Try again');
-      showPoemMessage('❌ WRONG WORD FOR THIS SLOT!');
+      showPoemMessage('❌ WRONG WORD FOR THIS SLOT!', 1200);
     }
   }, 250);
 }
@@ -242,13 +242,13 @@ function checkPoemLevelComplete(li) {
       showResult('🏆', 'Poem Blaster Complete!', G.score, G.totalXP, G.bestCombo);
     } else {
       speak('Mission Complete!');
-      showPoemMessage('🎉 MISSION COMPLETE!', 4000);
+      showPoemMessage('🎉 MISSION COMPLETE!', 1600);
       setTimeout(() => {
         poemState.current = li + 1;
         renderPoemLevel(li + 1);
         updatePoemProgress();
         speak('Starting ' + poemLevels[li + 1].title);
-      }, 3800);
+      }, 1500);
     }
   }
 }

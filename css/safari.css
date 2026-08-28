@@ -353,10 +353,10 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 .cross-title{font-family:'Fredoka',sans-serif;font-size:15px;color:var(--ink-dim);font-weight:600;}
 .cross-progress{font-family:'Fredoka',sans-serif;font-size:13px;color:var(--gold);font-weight:700;
   background:rgba(241,196,15,0.1);padding:4px 12px;border-radius:8px;}
-.cross-layout{display:flex;align-items:flex-start;justify-content:center;gap:32px;flex:1;min-height:0;overflow:hidden;padding-top:28px;}
+.cross-layout{display:flex;align-items:flex-start;justify-content:center;gap:32px;flex:1;min-height:0;overflow:hidden;padding-top:10px;}
 
 /* Grid area with emoji clues */
-.cross-grid-area{position:relative;flex:0 0 auto;padding:72px 86px 28px 86px;}
+.cross-grid-area{position:relative;flex:0 0 auto;padding:50px 86px 12px 86px;}
 .cross-grid{display:grid;grid-template-columns:repeat(9,55px);grid-template-rows:repeat(7,55px);gap:2px;}
 
 /* Cells */
@@ -422,7 +422,7 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 .crossword-actions{flex-shrink:0;text-align:center;padding-top:4px;}
 @media(max-width:720px){
   .cross-layout{flex-direction:column;align-items:center;overflow:hidden;}
-  .cross-grid-area{padding:64px 58px 16px 58px;}
+  .cross-grid-area{padding:50px 58px 12px 58px;}
   .cross-wordbank{flex:0 0 auto;width:100%;}
 }
 @media(max-height:760px){

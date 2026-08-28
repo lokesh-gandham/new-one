@@ -138,7 +138,7 @@ function renderCrossword() {
 function getCluePosition(w) {
   var cw = 55, gap = 2;
   var gridPadX = 86;
-  var gridPadY = 72;
+  var gridPadY = 50;
   var clueOffsetY = w.clueOffsetY || 0;
   var clueOffsetX = w.clueOffsetX || 0;
   var cellX = w.col * (cw + gap);

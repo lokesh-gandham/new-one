@@ -36,6 +36,7 @@ var GRAVITY = 0.25;
 var LAUNCH_POWER = 0.35;
 var MAX_PULL = 120;
 var TRAJECTORY_DOTS = 30;
+var ODD_TIMER = 120;
 
 var oddState = {
   current: 0,
@@ -52,7 +53,9 @@ var oddState = {
   particles: [],
   canvas: null,
   ctx: null,
-  animFrame: null
+  animFrame: null,
+  timeLeft: ODD_TIMER,
+  timerId: null
 };
 
 function initOddGame() {
@@ -83,6 +86,7 @@ function initOddGame() {
     setupOddEvents();
     loadOddLevel();
     updateOddProgress();
+    startOddTimer();
     renderOddCanvas();
   }
 
@@ -102,13 +106,42 @@ function resetOddState() {
   oddState.particles = [];
 }
 
+function startOddTimer() {
+  if (oddState.timerId) clearInterval(oddState.timerId);
+  oddState.timeLeft = ODD_TIMER;
+  updateOddTimerUI();
+  oddState.timerId = setInterval(function() {
+    oddState.timeLeft--;
+    updateOddTimerUI();
+    if (oddState.timeLeft <= 0) {
+      clearInterval(oddState.timerId);
+      oddState.timerId = null;
+      oddTimeout();
+    }
+  }, 1000);
+}
+
+function updateOddTimerUI() {
+  var el = document.getElementById('oddTimer');
+  if (!el) return;
+  var m = Math.floor(Math.max(0, oddState.timeLeft) / 60);
+  var s = Math.max(0, oddState.timeLeft) % 60;
+  el.textContent = '⏰ ' + m + ':' + (s < 10 ? '0' + s : s);
+  el.classList.toggle('low', oddState.timeLeft <= 30);
+}
+
+function oddTimeout() {
+  oddState.launched = false;
+  showResult('⏰', "Time's Up! Play Again?", G.score, G.totalXP, G.bestCombo);
+}
+
 function showOddPopup(text, type) {
   var el = document.getElementById('oddResultPopup');
   if (!el) return;
   el.textContent = text;
   el.className = 'odd-result-popup ' + (type || '') + ' show';
   clearTimeout(el._timer);
-  el._timer = setTimeout(function() { el.className = 'odd-result-popup'; }, 1500);
+  el._timer = setTimeout(function() { el.className = 'odd-result-popup'; }, 2000);
 }
 
 function loadOddLevel() {
@@ -662,6 +695,7 @@ function createExplosion(x, y) {
 
 function nextOddLevel() {
   if (oddState.current >= oddQuestions.length - 1) {
+    if (oddState.timerId) { clearInterval(oddState.timerId); oddState.timerId = null; }
     showResult('🎯', 'Jungle Launcher Complete!', G.score, G.totalXP, G.bestCombo);
   } else {
     oddState.current++;

@@ -18,12 +18,42 @@ const poemLevels = [
     ]}
 ];
 
-let poemState = { current: 0, filled: [], currentSlot: 0, isFiring: false };
+let poemState = { current: 0, filled: [], currentSlot: 0, isFiring: false, timeLeft: 120, timerId: null };
+const POEM_TIMER = 120;
 
 function initPoemGame() {
-  poemState = { current: 0, filled: [], currentSlot: 0, isFiring: false };
+  poemState = { current: 0, filled: [], currentSlot: 0, isFiring: false, timeLeft: POEM_TIMER, timerId: null };
   renderPoemLevel(0);
   updatePoemProgress();
+}
+
+function startPoemTimer() {
+  if (poemState.timerId) clearInterval(poemState.timerId);
+  poemState.timeLeft = POEM_TIMER;
+  updatePoemTimerUI();
+  poemState.timerId = setInterval(() => {
+    poemState.timeLeft--;
+    updatePoemTimerUI();
+    if (poemState.timeLeft <= 0) {
+      clearInterval(poemState.timerId);
+      poemState.timerId = null;
+      poemTimeout();
+    }
+  }, 1000);
+}
+
+function updatePoemTimerUI() {
+  const el = document.getElementById('poemTimer');
+  if (!el) return;
+  const m = Math.floor(Math.max(0, poemState.timeLeft) / 60);
+  const s = Math.max(0, poemState.timeLeft) % 60;
+  el.textContent = '⏰ ' + m + ':' + (s < 10 ? '0' + s : s);
+  el.classList.toggle('low', poemState.timeLeft <= 30);
+}
+
+function poemTimeout() {
+  poemState.isFiring = true;
+  showResult('⏰', 'Time\'s Up! Play Again?', G.score, G.totalXP, G.bestCombo);
 }
 
 function renderPoemLevel(li) {
@@ -70,6 +100,7 @@ function renderPoemLevel(li) {
   document.getElementById('poemGameScore').textContent = G.score;
   
   setupPoemAimLine();
+  startPoemTimer();
 }
 
 function getDistractors(answers) {
@@ -177,12 +208,13 @@ function showPoemMessage(text) {
   const msg = document.getElementById('poemMessage');
   msg.textContent = text;
   msg.style.display = 'block';
-  setTimeout(() => { msg.style.display = 'none'; }, 1400);
+  setTimeout(() => { msg.style.display = 'none'; }, 2000);
 }
 
 function checkPoemLevelComplete(li) {
   if (poemState.currentSlot >= poemLevels[li].answers.length) {
     if (li === poemLevels.length - 1) {
+      if (poemState.timerId) { clearInterval(poemState.timerId); poemState.timerId = null; }
       showResult('🏆', 'Poem Blaster Complete!', G.score, G.totalXP, G.bestCombo);
     } else {
       showPoemMessage('🎉 MISSION COMPLETE!');
@@ -208,7 +240,8 @@ function updatePoemProgress() {
 }
 
 function resetPoemGame() {
-  poemState = { current: 0, filled: [], currentSlot: 0, isFiring: false };
+  if (poemState.timerId) { clearInterval(poemState.timerId); poemState.timerId = null; }
+  poemState = { current: 0, filled: [], currentSlot: 0, isFiring: false, timeLeft: POEM_TIMER, timerId: null };
 }
 
 initPoemGame();

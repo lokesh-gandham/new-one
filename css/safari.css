@@ -108,6 +108,12 @@ button{font-family:inherit;}
   background:linear-gradient(145deg,rgba(255,107,107,0.2),rgba(238,90,36,0.1));
   border-color:rgba(255,107,107,0.3);
 }
+.gp-chip.timer-chip{
+  background:linear-gradient(145deg,rgba(87,199,255,0.18),rgba(41,128,185,0.1));
+  border-color:rgba(87,199,255,0.35);
+  min-width:88px;justify-content:center;
+}
+.gp-chip.timer-chip.low{background:linear-gradient(145deg,rgba(255,107,107,0.25),rgba(238,90,36,0.15));border-color:rgba(255,107,107,0.4);}
 
 /* Right section - Sound toggle */
 .sound-toggle{

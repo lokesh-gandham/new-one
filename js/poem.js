@@ -148,17 +148,20 @@ function shootPoemAsteroid(asteroidEl, word) {
   const laser = document.getElementById('poemLaser');
   const marker = document.getElementById('poemTargetMarker');
   const slingshot = document.getElementById('poemSlingshot');
-  
-  slingshot.style.left = targetX + 'px';
+
+  const slingHalf = (slingshot.offsetWidth || 40) / 2;
+  const shotX = Math.max(slingHalf, Math.min(areaRect.width - slingHalf, targetX));
+
+  slingshot.style.left = shotX + 'px';
   slingshot.style.transform = 'translateX(-50%)';
   
-  marker.style.left = targetX + 'px';
+  marker.style.left = shotX + 'px';
   marker.style.top = targetY + 'px';
   marker.style.display = 'block';
   
   const shipTopY = areaRect.height - 55;
   const laserHeight = shipTopY - targetY;
-  laser.style.left = (targetX - 3) + 'px';
+  laser.style.left = (shotX - 3) + 'px';
   laser.style.top = targetY + 'px';
   laser.style.height = laserHeight + 'px';
   laser.style.display = 'block';

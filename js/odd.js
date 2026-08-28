@@ -6,9 +6,9 @@ var oddQuestions = [
     { emoji: '🍲', label: 'Soup', img: '../assets/soup-removebg-preview.png' }
   ], correctIdx: 1 },
   { question: 'Which one CANNOT taste?', options: [
-    { emoji: '🍦', label: 'Ice Cream' },
-    { emoji: '🍫', label: 'Chocolate' },
-    { emoji: '🤖', label: 'Robot' }
+    { emoji: '🍦', label: 'Ice Cream', img: '../assets/ice_cream-removebg-preview.png' },
+    { emoji: '🍫', label: 'Chocolate', img: '../assets/chocolate-removebg-preview.png' },
+    { emoji: '🤖', label: 'Robot', img: '../assets/robot-removebg-preview.png' }
   ], correctIdx: 2 },
   { question: 'Which one CANNOT hear?', options: [
     { emoji: '🍎', label: 'Apple' },

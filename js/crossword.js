@@ -3,8 +3,8 @@
 var crosswordWords = [
   { number: 1, word: 'NOSE', clue: 'Organ to smell', row: 0, col: 5, dir: 'down', emoji: '👃', image: '../assets/body-parts%20(2).png', label: 'Nose', cluePos: 'top' },
   { number: 2, word: 'TONGUE', clue: 'Organ to taste', row: 1, col: 7, dir: 'down', emoji: '👅', image: '../assets/tongue.png', label: 'Tongue', cluePos: 'top' },
-  { number: 3, word: 'MOUTH', clue: 'Organ to taste & speak', row: 1, col: 4, dir: 'across', emoji: '👄', image: '../assets/tongue.png', label: 'Mouth', cluePos: 'right' },
-  { number: 4, word: 'EYES', clue: 'Organs to see', row: 2, col: 2, dir: 'down', emoji: '👁️', image: '../assets/body-parts%20(3).png', label: 'Eyes', cluePos: 'top' },
+  { number: 3, word: 'MOUTH', clue: 'Organ to taste & speak', row: 1, col: 4, dir: 'across', emoji: '👄', image: '../assets/mouth1-removebg-preview.png', label: 'Mouth', cluePos: 'right' },
+  { number: 4, word: 'EYES', clue: 'Organs to see', row: 2, col: 2, dir: 'down', emoji: '👁️', image: '../assets/body-parts%20(3).png', label: 'Eyes', cluePos: 'top', clueOffsetY: 20 },
   { number: 5, word: 'EARS', clue: 'Organs to hear', row: 2, col: 2, dir: 'across', emoji: '👂', image: '../assets/ear.png', label: 'Ears', cluePos: 'left', clueOffsetY: 64 },
   { number: 6, word: 'TEETH', clue: 'Organs to chew', row: 4, col: 0, dir: 'across', emoji: '🦷', label: 'Teeth', cluePos: 'left', clueOffsetY: 58, clueOffsetX: -20 }
 ];
@@ -21,7 +21,7 @@ var CROSS_SHAPE = [
   '.......#.'
 ];
 
-var crossState = { grid: [], filled: {}, solved: 0, total: crosswordWords.length, feedback: {} };
+var crossState = { grid: [], filled: {}, solved: 0, total: crosswordWords.length, feedback: {}, finished: false };
 
 function initCrosswordGame() {
   crossState.filled = {
@@ -32,6 +32,7 @@ function initCrosswordGame() {
   };
   crossState.solved = 0;
   crossState.feedback = {};
+  crossState.finished = false;
 
   crossState.grid = [];
   for (var r = 0; r < CROSS_ROWS; r++) {
@@ -84,6 +85,7 @@ function renderCrossword() {
     var filled = isWordComplete(w);
     html += '<div class="cross-clue-emoji' + (filled ? ' done' : '') + '" style="top:' + pos.top + ';left:' + pos.left + ';">';
     html += '<span class="cross-clue-icon">' + (w.image ? '<img src="' + w.image + '" alt="' + w.label + '">' : w.emoji) + '</span>';
+    if (filled) html += '<span class="cross-clue-check">✓</span>';
     html += '</div>';
   });
 
@@ -120,14 +122,11 @@ function renderCrossword() {
     html += '<span class="cross-word-emoji">' + (w.image ? '<img src="' + w.image + '" alt="' + w.label + '">' : w.emoji) + '</span>';
     html += '<span class="cross-word-label">' + w.label + ' — </span>';
     html += '<span class="cross-word-letters">' + getRevealedWord(w) + '</span>';
+    if (filled) html += '<span class="cross-word-check">✓</span>';
     html += '</div>';
   });
   html += '</div>';
 
-  html += '</div>';
-
-  html += '<div class="crossword-actions">';
-  html += '<button class="btn btn-leaf" onclick="checkCrossword()">Check Crossword ✓</button>';
   html += '</div>';
 
   stage.innerHTML = html;
@@ -196,6 +195,7 @@ function isWordComplete(w) {
 function crossClick(r, c) {
   var cell = crossState.grid[r][c];
   if (cell.type === 'empty') return;
+  if (isCellLocked(r, c)) return;
   var key = r + ',' + c;
   var correctLetter = getLetterForCell(r, c);
   var wrongLetter = getWrongLetter(correctLetter);
@@ -206,8 +206,25 @@ function crossClick(r, c) {
   var target = document.querySelector('.cross-cell[onclick="crossClick(' + r + ',' + c + ')"]');
   if (target) {
     document.querySelectorAll('.cross-letter-popout').forEach(function(oldPopup) { oldPopup.remove(); });
-    target.appendChild(popup);
+    var gridArea = document.querySelector('.cross-grid-area');
+    var cellRect = target.getBoundingClientRect();
+    var areaRect = gridArea.getBoundingClientRect();
+    popup.style.left = (cellRect.left - areaRect.left + cellRect.width / 2) + 'px';
+    popup.style.top = (cellRect.top - areaRect.top + cellRect.height / 2) + 'px';
+    gridArea.appendChild(popup);
   }
+}
+
+function isCellLocked(r, c) {
+  for (var i = 0; i < crosswordWords.length; i++) {
+    var w = crosswordWords[i];
+    for (var j = 0; j < w.word.length; j++) {
+      var wordRow = w.dir === 'down' ? w.row + j : w.row;
+      var wordCol = w.dir === 'across' ? w.col + j : w.col;
+      if (wordRow === r && wordCol === c && isWordComplete(w)) return true;
+    }
+  }
+  return false;
 }
 
 function getLetterForCell(r, c) {
@@ -237,8 +254,8 @@ function chooseCrossLetter(event, letter, r, c) {
   event.stopPropagation();
   var key = r + ',' + c;
   crossState.filled[key] = letter;
-  renderCrossword();
   updateSolvedCount();
+  renderCrossword();
 }
 
 function updateSolvedCount() {
@@ -248,12 +265,16 @@ function updateSolvedCount() {
       solved++;
       if (crossState.feedback[w.label] !== 'correct') {
         crossState.feedback[w.label] = 'correct';
+        playSound('correct');
+        speak('Correct ' + w.label);
         showBanner('Correct ' + w.label + '!', 'correct');
       }
     } else if (isWordFilled(w) && crossState.feedback[w.label] !== 'correct') {
       if (crossState.feedback[w.label] !== 'wrong') {
         crossState.feedback[w.label] = 'wrong';
         wrongAnswer();
+        playSound('wrong');
+        speak('Try again');
         showBanner('Wrong ' + w.label + ' - try again', 'wrong');
       }
     }
@@ -261,6 +282,15 @@ function updateSolvedCount() {
   crossState.solved = solved;
   var el = document.getElementById('crossCount');
   if (el) el.textContent = solved + '/' + crossState.total + ' Words';
+  if (solved === crossState.total && !crossState.finished) {
+    crossState.finished = true;
+    setTimeout(function() {
+      playSound('correct');
+      speak('Crossword complete!');
+      addScore(50);
+      showResult('🧩', 'Crossword Complete!', G.score, G.totalXP, G.bestCombo);
+    }, 2100);
+  }
 }
 
 function isWordFilled(w) {
@@ -292,7 +322,7 @@ function resetCrosswordGame() {
     '2,4': 'r',
     '1,7': 't',
     '4,2': 'e'
-  }, solved: 0, total: crosswordWords.length, feedback: {} };
+  }, solved: 0, total: crosswordWords.length, feedback: {}, finished: false };
 }
 
 initCrosswordGame();

@@ -112,17 +112,19 @@
       pointer-events: none;
     }
 
-    /* Aiming Trajectory Dots */
+    /* Aiming Trajectory Thread */
     .trajectory-dot {
       position: absolute;
-      width: 10px;
-      height: 10px;
+      width: 6px;
+      height: 6px;
       background: #ffcc00;
-      border: 2px solid #000;
+      border: 1px solid #b8860b;
       border-radius: 50%;
       pointer-events: none;
       z-index: 3;
       display: none;
+      opacity: 0.9;
+      box-shadow: 0 0 4px rgba(255, 204, 0, 0.6);
     }
 
     /* The Bird (Projectile) */
@@ -150,18 +152,33 @@
     .target-crate {
       position: absolute;
       width: 100px;
-      height: 60px;
+      height: 80px;
       background: #d4a373;
       border: 4px solid #582f0e;
       border-radius: 8px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       color: #3a1500;
-      font-size: 1.2rem;
+      font-size: 1rem;
       font-weight: bold;
       box-shadow: 4px 6px 0px rgba(0,0,0,0.3);
       z-index: 3;
+      overflow: hidden;
+    }
+
+    .target-crate img {
+      width: 60px;
+      height: 50px;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .target-crate .crate-label {
+      margin-top: 2px;
+      font-size: 0.7rem;
+      letter-spacing: 1px;
     }
 
     /* Feedback Banner */
@@ -202,9 +219,18 @@
     <div class="bird" id="bird">😡</div>
 
     <!-- Word Crates (Targets) -->
-    <div class="target-crate" id="crate1" style="right: 80px; bottom: 240px;">FLOWERS</div>
-    <div class="target-crate" id="crate2" style="right: 80px; bottom: 150px;">PENCIL</div>
-    <div class="target-crate" id="crate3" style="right: 80px; bottom: 60px;">BELL</div>
+    <div class="target-crate" id="crate1" style="right: 80px; bottom: 240px;">
+      <img src="assets/flower-removebg-preview.png" alt="Flowers">
+      <span class="crate-label">FLOWERS</span>
+    </div>
+    <div class="target-crate" id="crate2" style="right: 80px; bottom: 150px;">
+      <img src="assets/pencil-removebg-preview.png" alt="Pencil">
+      <span class="crate-label">PENCIL</span>
+    </div>
+    <div class="target-crate" id="crate3" style="right: 80px; bottom: 60px;">
+      <img src="assets/puzzle-removebg-preview.png" alt="Bell">
+      <span class="crate-label">BELL</span>
+    </div>
 
     <!-- Pop Up Banner -->
     <div class="message-pop" id="message-box">BOOM! DIRECT HIT! 💥</div>
@@ -230,9 +256,9 @@
     let isFlying = false;
     let score = 0;
 
-    // Create 12 Trajectory Marker Dots
+    // Create dense trajectory thread dots (stretcher style)
     const trajectoryDots = [];
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 40; i++) {
       const dot = document.createElement('div');
       dot.className = 'trajectory-dot';
       gameArea.appendChild(dot);
@@ -290,7 +316,7 @@
       bandRight.style.transform = `rotate(${angle2}deg)`;
     }
 
-    // Update Aim Trajectory Marker
+    // Update Aim Trajectory Thread
     function drawTrajectory(simVX, simVY) {
       let simX = birdX + 22;
       let simY = birdY + 22;
@@ -298,13 +324,15 @@
       let currVY = simVY;
 
       trajectoryDots.forEach((dot, index) => {
-        simX += currVX * 1.5;
-        simY += currVY * 1.5;
-        currVY += 0.8 * 1.5; // Simulating gravity
+        const step = 0.6 + (index * 0.04);
+        simX += currVX * step;
+        simY += currVY * step;
+        currVY += 0.8 * step;
 
-        dot.style.left = (simX - 5) + 'px';
-        dot.style.top = (simY - 5) + 'px';
+        dot.style.left = (simX - 3) + 'px';
+        dot.style.top = (simY - 3) + 'px';
         dot.style.display = 'block';
+        dot.style.opacity = (1 - index / trajectoryDots.length).toFixed(2);
       });
     }
 

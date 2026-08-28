@@ -1,9 +1,9 @@
 /* ========== GAME 3: JUNGLE LAUNCHER (ANGRY BIRDS STYLE) ========== */
 var oddQuestions = [
   { question: 'Which one CANNOT smell?', options: [
-    { emoji: '🌸', label: 'Flower' },
-    { emoji: '✏️', label: 'Pencil' },
-    { emoji: '🍲', label: 'Soup' }
+    { emoji: '🌸', label: 'Flower', img: '../assets/flower-removebg-preview.png' },
+    { emoji: '✏️', label: 'Pencil', img: '../assets/pencil-removebg-preview.png' },
+    { emoji: '🍲', label: 'Soup', img: '../assets/soup-removebg-preview.png' }
   ], correctIdx: 1 },
   { question: 'Which one CANNOT taste?', options: [
     { emoji: '🍦', label: 'Ice Cream' },
@@ -16,6 +16,29 @@ var oddQuestions = [
     { emoji: '🔔', label: 'Bell' }
   ], correctIdx: 0 }
 ];
+
+var loadedImages = {};
+function preloadOptionImages(callback) {
+  var imgs = [];
+  oddQuestions.forEach(function(q) {
+    q.options.forEach(function(opt) {
+      if (opt.img && !loadedImages[opt.img]) {
+        imgs.push(opt.img);
+      }
+    });
+  });
+  if (imgs.length === 0) { callback(); return; }
+  var loaded = 0;
+  imgs.forEach(function(src) {
+    var img = new Image();
+    img.onload = img.onerror = function() {
+      loadedImages[src] = img;
+      loaded++;
+      if (loaded >= imgs.length) callback();
+    };
+    img.src = src;
+  });
+}
 
 var GRAVITY = 0.25;
 var LAUNCH_POWER = 0.35;
@@ -73,10 +96,12 @@ function initOddGame() {
     oddState.slingshot.x = 220;
     oddState.slingshot.y = canvas.height - 80;
     setupOddEvents();
-    loadOddLevel();
-    updateOddProgress();
-    oddDemo();
-    renderOddCanvas();
+    preloadOptionImages(function() {
+      loadOddLevel();
+      updateOddProgress();
+      oddDemo();
+      renderOddCanvas();
+    });
   }
 
   startGame();
@@ -237,7 +262,7 @@ function loadOddLevel() {
   oddState.bird = {
     x: oddState.slingshot.x,
     y: oddState.slingshot.y - 30,
-    radius: 18,
+    radius: 24,
     vx: 0, vy: 0,
     active: true
   };
@@ -247,17 +272,20 @@ function loadOddLevel() {
   var ch = canvas.height;
   var count = q.options.length;
   var targetX = cw * 0.78;
-  var topY = ch * 0.05;
-  var bottomY = ch * 0.85;
-  var spacing = (bottomY - topY) / (count + 1);
+  var labelFootprint = 82;
+  var desiredSpacing = 145;
+  var spacing = Math.min(desiredSpacing, (ch - 60 - labelFootprint) / Math.max(count - 1, 1));
+  spacing = Math.max(135, spacing);
+  var topY = 60;
 
   q.options.forEach(function(opt, i) {
     oddState.targets.push({
       x: targetX,
-      y: topY + spacing * (i + 1),
-      radius: 34,
+      y: topY + spacing * i,
+      radius: 48,
       emoji: opt.emoji,
       label: opt.label,
+      img: opt.img || null,
       isOdd: i === q.correctIdx,
       hit: false
     });
@@ -361,6 +389,7 @@ function launchBird() {
   var bird = oddState.bird;
   var slX = oddState.slingshot.x;
   var slY = oddState.slingshot.y - 30;
+  var target = oddState.hoveredTarget;
 
   var dx = slX - bird.x;
   var dy = slY - bird.y;
@@ -375,14 +404,30 @@ function launchBird() {
     return;
   }
 
-  bird.vx = dx * LAUNCH_POWER;
-  bird.vy = dy * LAUNCH_POWER;
+  if (target) {
+    var targetVelocity = getTargetLaunchVelocity(bird, target, pullDist);
+    bird.vx = targetVelocity.vx;
+    bird.vy = targetVelocity.vy;
+  } else {
+    bird.vx = dx * LAUNCH_POWER;
+    bird.vy = dy * LAUNCH_POWER;
+  }
   oddState.launched = true;
   playSound('launch');
   oddState.targetedItem = oddState.hoveredTarget;
   oddState.hoveredTarget = null;
 
   document.getElementById('oddInstruction').textContent = 'Watch the bird fly!';
+}
+
+function getTargetLaunchVelocity(bird, target, pullDist) {
+  var flightTime = 34;
+  var targetDX = target.x - bird.x;
+  var targetDY = target.y - bird.y;
+  return {
+    vx: targetDX / flightTime,
+    vy: (targetDY - 0.5 * GRAVITY * flightTime * flightTime) / flightTime
+  };
 }
 
 function renderOddCanvas() {
@@ -414,29 +459,6 @@ function renderOddCanvas() {
 }
 
 function drawBackground(ctx, canvas) {
-  var groundGrad = ctx.createLinearGradient(0, canvas.height - 60, 0, canvas.height);
-  groundGrad.addColorStop(0, '#5d4037');
-  groundGrad.addColorStop(1, '#3e2723');
-  ctx.fillStyle = groundGrad;
-  ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
-
-  ctx.fillStyle = '#2ecc71';
-  ctx.fillRect(0, canvas.height - 54, canvas.width, 8);
-
-  ctx.strokeStyle = '#27ae60';
-  ctx.lineWidth = 2;
-  for (var i = 0; i < canvas.width; i += 25) {
-    ctx.beginPath();
-    ctx.moveTo(i, canvas.height - 54);
-    ctx.lineTo(i + 4, canvas.height - 70);
-    ctx.lineTo(i + 8, canvas.height - 54);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(i + 12, canvas.height - 54);
-    ctx.lineTo(i + 15, canvas.height - 65);
-    ctx.lineTo(i + 18, canvas.height - 54);
-    ctx.stroke();
-  }
 }
 
 function drawSlingshot(ctx) {
@@ -444,28 +466,28 @@ function drawSlingshot(ctx) {
 
   ctx.fillStyle = '#5d4037';
   ctx.beginPath();
-  ctx.moveTo(s.x - 10, s.y);
-  ctx.lineTo(s.x + 10, s.y);
-  ctx.lineTo(s.x + 5, s.y - 65);
-  ctx.lineTo(s.x - 5, s.y - 65);
+  ctx.moveTo(s.x - 14, s.y);
+  ctx.lineTo(s.x + 14, s.y);
+  ctx.lineTo(s.x + 7, s.y - 112);
+  ctx.lineTo(s.x - 7, s.y - 112);
   ctx.closePath();
   ctx.fill();
 
   ctx.fillStyle = '#8d6e63';
   ctx.beginPath();
-  ctx.moveTo(s.x - 3, s.y - 5);
-  ctx.lineTo(s.x + 3, s.y - 5);
-  ctx.lineTo(s.x + 2, s.y - 60);
-  ctx.lineTo(s.x - 2, s.y - 60);
+  ctx.moveTo(s.x - 5, s.y - 7);
+  ctx.lineTo(s.x + 5, s.y - 7);
+  ctx.lineTo(s.x + 3, s.y - 106);
+  ctx.lineTo(s.x - 3, s.y - 106);
   ctx.closePath();
   ctx.fill();
 
   ctx.fillStyle = '#4a3428';
   ctx.beginPath();
-  ctx.arc(s.x - 12, s.y - 60, 8, 0, Math.PI * 2);
+  ctx.arc(s.x - 18, s.y - 106, 11, 0, Math.PI * 2);
   ctx.fill();
   ctx.beginPath();
-  ctx.arc(s.x + 12, s.y - 60, 8, 0, Math.PI * 2);
+  ctx.arc(s.x + 18, s.y - 106, 11, 0, Math.PI * 2);
   ctx.fill();
 }
 
@@ -476,24 +498,63 @@ function drawElasticBand(ctx) {
   ctx.strokeStyle = '#8d6e63';
   ctx.lineWidth = 5;
   ctx.beginPath();
-  ctx.moveTo(s.x - 12, s.y - 60);
+  ctx.moveTo(s.x - 18, s.y - 106);
   ctx.lineTo(bird.x, bird.y);
   ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(s.x + 12, s.y - 60);
+  ctx.moveTo(s.x + 18, s.y - 106);
   ctx.lineTo(bird.x, bird.y);
   ctx.stroke();
 
   ctx.strokeStyle = '#a1887f';
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(s.x - 12, s.y - 60);
+  ctx.moveTo(s.x - 18, s.y - 106);
   ctx.lineTo(bird.x, bird.y);
   ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(s.x + 12, s.y - 60);
+  ctx.moveTo(s.x + 18, s.y - 106);
   ctx.lineTo(bird.x, bird.y);
   ctx.stroke();
+}
+
+function getMarkedTrajectoryPoints(bird, target) {
+  var dx = target.x - bird.x;
+  var dy = target.y - bird.y;
+  var lift = Math.max(150, Math.abs(dy) * 0.65);
+  var c1 = { x: bird.x + dx * 0.28, y: bird.y - lift };
+  var c2 = { x: bird.x + dx * 0.72, y: target.y - Math.max(24, Math.abs(dy) * 0.18) };
+  var dense = [];
+  for (var i = 0; i <= 120; i++) {
+    var t = i / 120;
+    var inverse = 1 - t;
+    dense.push({
+      x: inverse * inverse * inverse * bird.x + 3 * inverse * inverse * t * c1.x + 3 * inverse * t * t * c2.x + t * t * t * target.x,
+      y: inverse * inverse * inverse * bird.y + 3 * inverse * inverse * t * c1.y + 3 * inverse * t * t * c2.y + t * t * t * target.y
+    });
+  }
+  var distances = [0];
+  for (var j = 1; j < dense.length; j++) {
+    var previous = dense[j - 1];
+    var current = dense[j];
+    var segmentX = current.x - previous.x;
+    var segmentY = current.y - previous.y;
+    distances[j] = distances[j - 1] + Math.sqrt(segmentX * segmentX + segmentY * segmentY);
+  }
+  var total = distances[distances.length - 1];
+  var points = [];
+  for (var pointIndex = 1; pointIndex <= TRAJECTORY_DOTS; pointIndex++) {
+    var wanted = total * pointIndex / TRAJECTORY_DOTS;
+    var segment = 1;
+    while (segment < distances.length - 1 && distances[segment] < wanted) segment++;
+    var range = distances[segment] - distances[segment - 1] || 1;
+    var ratio = (wanted - distances[segment - 1]) / range;
+    points.push({
+      x: dense[segment - 1].x + (dense[segment].x - dense[segment - 1].x) * ratio,
+      y: dense[segment - 1].y + (dense[segment].y - dense[segment - 1].y) * ratio
+    });
+  }
+  return points;
 }
 
 function drawTrajectoryArc(ctx) {
@@ -503,14 +564,23 @@ function drawTrajectoryArc(ctx) {
 
   var launchVX = (slX - bird.x) * LAUNCH_POWER;
   var launchVY = (slY - bird.y) * LAUNCH_POWER;
+  var target = oddState.hoveredTarget;
+  var points = target ? getMarkedTrajectoryPoints(bird, target) : [];
+  if (target) {
+    var pullDX = slX - bird.x;
+    var pullDY = slY - bird.y;
+    var pullDist = Math.sqrt(pullDX * pullDX + pullDY * pullDY);
+    var targetVelocity = getTargetLaunchVelocity(bird, target, pullDist);
+    launchVX = targetVelocity.vx;
+    launchVY = targetVelocity.vy;
+  }
 
   var simX = bird.x;
   var simY = bird.y;
   var simVX = launchVX;
   var simVY = launchVY;
 
-  var points = [];
-  for (var i = 0; i < TRAJECTORY_DOTS; i++) {
+  for (var i = 0; i < TRAJECTORY_DOTS && !target; i++) {
     simX += simVX;
     simY += simVY;
     simVY += GRAVITY;
@@ -522,7 +592,7 @@ function drawTrajectoryArc(ctx) {
       if (t.hit) continue;
       var tdx = simX - t.x;
       var tdy = simY - t.y;
-      if (Math.sqrt(tdx * tdx + tdy * tdy) < 18 + t.radius) {
+      if (Math.sqrt(tdx * tdx + tdy * tdy) < oddState.bird.radius + t.radius) {
         hitTarget = true;
         break;
       }
@@ -535,13 +605,28 @@ function drawTrajectoryArc(ctx) {
   if (points.length < 2) return;
 
   ctx.save();
-  ctx.setLineDash([6, 4]);
 
-  ctx.strokeStyle = 'rgba(255,255,100,0.6)';
-  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = 'rgba(255,255,100,0.4)';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([]);
   ctx.beginPath();
   ctx.moveTo(bird.x, bird.y);
+  for (var i = 0; i < points.length; i++) {
+    if (i < points.length - 1) {
+      var midX = (points[i].x + points[i + 1].x) / 2;
+      var midY = (points[i].y + points[i + 1].y) / 2;
+      ctx.quadraticCurveTo(points[i].x, points[i].y, midX, midY);
+    } else {
+      ctx.lineTo(points[i].x, points[i].y);
+    }
+  }
+  ctx.stroke();
 
+  ctx.strokeStyle = 'rgba(255,220,50,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([8, 6]);
+  ctx.beginPath();
+  ctx.moveTo(bird.x, bird.y);
   for (var i = 0; i < points.length; i++) {
     if (i < points.length - 1) {
       var midX = (points[i].x + points[i + 1].x) / 2;
@@ -556,12 +641,19 @@ function drawTrajectoryArc(ctx) {
   ctx.setLineDash([]);
 
   for (var i = 0; i < points.length; i++) {
-    var alpha = 1 - (i / points.length) * 0.6;
-    var size = 5 - (i / points.length) * 2.5;
-    ctx.fillStyle = 'rgba(255,255,100,' + alpha + ')';
+    var alpha = 1 - (i / points.length) * 0.7;
+    var size = 4.5 - (i / points.length) * 3;
+    ctx.fillStyle = 'rgba(255,230,80,' + alpha + ')';
     ctx.beginPath();
-    ctx.arc(points[i].x, points[i].y, Math.max(size, 2), 0, Math.PI * 2);
+    ctx.arc(points[i].x, points[i].y, Math.max(size, 1.5), 0, Math.PI * 2);
     ctx.fill();
+
+    if (i % 4 === 0) {
+      ctx.fillStyle = 'rgba(255,255,200,' + (alpha * 0.5) + ')';
+      ctx.beginPath();
+      ctx.arc(points[i].x, points[i].y, Math.max(size + 3, 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
 
   ctx.restore();
@@ -639,23 +731,30 @@ function drawTargets(ctx) {
     ctx.arc(0, 0, t.radius, 0, Math.PI * 2);
     ctx.stroke();
 
-    ctx.font = '42px serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(t.emoji, 0, -6);
+    var imgSrc = t.img || null;
+    var loadedImg = imgSrc ? loadedImages[imgSrc] : null;
+    if (loadedImg && loadedImg.complete && loadedImg.naturalWidth > 0) {
+      var imgSize = t.radius * 1.3;
+      ctx.drawImage(loadedImg, -imgSize / 2, -imgSize / 2 - 4, imgSize, imgSize);
+    } else {
+      ctx.font = '54px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(t.emoji, 0, -6);
+    }
 
     ctx.fillStyle = 'rgba(10,26,15,0.7)';
     var tw = ctx.measureText(t.label).width;
     var boxW = tw + 16;
-    var boxH = 18;
+    var boxH = 26;
     var boxX = -boxW / 2;
-    var boxY = t.radius - 22;
+    var boxY = t.radius + 8;
     ctx.beginPath();
     ctx.roundRect(boxX, boxY, boxW, boxH, 4);
     ctx.fill();
 
     ctx.fillStyle = '#f5f5dc';
-    ctx.font = 'bold 11px Fredoka, Arial';
+    ctx.font = 'bold 16px Fredoka, Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(t.label, 0, boxY + boxH / 2);

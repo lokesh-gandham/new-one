@@ -11,7 +11,7 @@
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;overflow-x:hidden;touch-action:manipulation;}
-html{scrollbar-width:none;-ms-overflow-style:none;}
+html{scrollbar-width:none;-ms-overflow-style:none;scrollbar-gutter:stable;}
 html::-webkit-scrollbar{display:none;}
 html.fonts-loading body{opacity:0;}
 html.fonts-ready body{animation:fontFadeIn .45s ease;}
@@ -53,7 +53,7 @@ button{font-family:inherit;}
 .screen.active{display:block;animation:screenIn .4s ease;}
 .screen.active.game-screen{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
 .game-screen .game-wrap{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
-#screen-poem.active,#screen-crossword.active,#screen-odd.active{height:100vh;overflow:hidden;}
+#screen-poem.active,#screen-crossword.active,#screen-odd.active{height:100vh;height:100dvh;overflow:hidden;}
 @keyframes screenIn{from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:translateY(0);}}
 
 /* ---------- HUD - JUNGLE COMMAND CENTER ---------- */
@@ -162,6 +162,8 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 
 /* ---------- Game Cards - NEW STYLE ---------- */
 .game-cards{max-width:1150px;margin:26px auto 0;padding:0 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.odd-card{order:2;}
+.crossword-card{order:3;}
 @media(max-width:700px){.game-cards{grid-template-columns:1fr;}}
 
 .game-card{
@@ -246,7 +248,7 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 .float-banner.achieve{background:linear-gradient(135deg,var(--coral),var(--gold));color:#fff;box-shadow:0 12px 30px rgba(255,107,107,.35);}
 
 /* ---------- SHARED RESULT POPUP ---------- */
-.game-result-overlay{position:absolute;inset:0;background:rgba(10,26,15,0.88);z-index:50;
+.game-result-overlay{position:fixed;inset:0;background:rgba(10,26,15,0.88);z-index:1000;
   display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.4s;}
 .game-result-overlay.show{opacity:1;pointer-events:auto;}
 .game-result-card{background:rgba(15,35,20,0.95);border:3px solid var(--gold);border-radius:20px;
@@ -351,7 +353,7 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 .cross-title{font-family:'Fredoka',sans-serif;font-size:15px;color:var(--ink-dim);font-weight:600;}
 .cross-progress{font-family:'Fredoka',sans-serif;font-size:13px;color:var(--gold);font-weight:700;
   background:rgba(241,196,15,0.1);padding:4px 12px;border-radius:8px;}
-.cross-layout{display:flex;align-items:flex-start;justify-content:center;gap:32px;flex:1;min-height:0;overflow:auto;padding-top:34px;}
+.cross-layout{display:flex;align-items:flex-start;justify-content:center;gap:32px;flex:1;min-height:0;overflow:hidden;padding-top:28px;}
 
 /* Grid area with emoji clues */
 .cross-grid-area{position:relative;flex:0 0 auto;padding:72px 86px 28px 86px;}
@@ -388,34 +390,43 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 .cross-clue-icon{font-size:42px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));}
 .cross-clue-icon img{display:block;width:44px;height:44px;object-fit:contain;}
 .cross-clue-emoji.done .cross-clue-num{background:#888;}
+.cross-clue-check{position:absolute;right:-8px;bottom:-5px;width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;background:var(--success);color:#063b1d;
+  border:2px solid #fff;font:bold 15px 'Fredoka',sans-serif;}
 
-.cross-letter-popout{position:absolute;z-index:20;top:50%;left:50%;display:flex;gap:6px;
+.cross-letter-popout{position:absolute;z-index:100;display:flex;gap:6px;
   padding:6px;background:#123d2a;border:2px solid var(--gold);border-radius:10px;
   transform:translate(-50%,-50%);box-shadow:0 4px 12px rgba(0,0,0,0.35);}
-.cross-letter-popout button{width:42px;height:42px;padding:0;border:0;border-radius:6px;
-  background:#fff;color:#17633b;font:700 26px 'Fredoka',sans-serif;cursor:pointer;}
+.cross-letter-popout button{width:48px;height:48px;padding:0;border:0;border-radius:7px;
+  background:#fff;color:#17633b;font:700 29px 'Fredoka',sans-serif;cursor:pointer;}
 .cross-letter-popout button:hover{background:var(--gold);color:#1a1200;}
 
 /* Word bank sidebar */
-.cross-wordbank{flex:0 0 200px;display:flex;flex-direction:column;gap:6px;padding-top:8px;}
-.cross-wordbank-title{font-family:'Fredoka',sans-serif;font-size:14px;color:var(--gold);font-weight:700;margin-bottom:4px;}
-.cross-word-row{display:flex;align-items:center;gap:6px;padding:6px 10px;
-  background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid var(--leaf);font-size:13px;}
+.cross-wordbank{flex:0 0 270px;display:flex;flex-direction:column;gap:8px;padding-top:8px;}
+.cross-wordbank-title{font-family:'Fredoka',sans-serif;font-size:21px;color:var(--gold);font-weight:700;margin-bottom:5px;}
+.cross-word-row{display:flex;align-items:center;gap:8px;padding:8px 12px;
+  background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid var(--leaf);font-size:19px;}
 .cross-word-row.done{border-left-color:#888;opacity:0.6;}
 .cross-word-emoji{font-size:18px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .cross-word-emoji img{display:block;width:26px;height:26px;object-fit:contain;}
-.cross-word-label{color:var(--ink-dim);font-weight:600;}
-.cross-word-letters{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--ink);letter-spacing:2px;}
+.cross-word-label{color:var(--ink-dim);font-weight:600;white-space:nowrap;}
+.cross-word-letters{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--ink);letter-spacing:2px;font-size:20px;}
+.cross-word-check{margin-left:auto;color:var(--leaf-glow);font:bold 22px 'Fredoka',sans-serif;}
 .revealed-letter{color:var(--leaf-glow);}
 .hidden-letter{color:var(--ink-dim);opacity:0.4;}
 .float-banner.correct{background:linear-gradient(135deg,#2ecc71,#a8f0bd);color:#063b1d;}
 .float-banner.wrong{background:linear-gradient(135deg,#ff6b6b,#ffc0c0);color:#5a1010;}
+.float-banner.correct,.float-banner.wrong{top:50%;font-size:22px;padding:18px 34px;}
+.float-banner.correct.show,.float-banner.wrong.show{transform:translate(-50%,-50%);}
 
 .crossword-actions{flex-shrink:0;text-align:center;padding-top:4px;}
 @media(max-width:720px){
-  .cross-layout{flex-direction:column;align-items:center;overflow:auto;}
+  .cross-layout{flex-direction:column;align-items:center;overflow:hidden;}
   .cross-grid-area{padding:64px 58px 16px 58px;}
   .cross-wordbank{flex:0 0 auto;width:100%;}
+}
+@media(max-height:760px){
+  .cross-layout{transform:none;margin-bottom:0;}
 }
 
 /* ---------- GAME 3: ODD ONE OUT - ANGRY GAMING STYLE ---------- */
@@ -439,7 +450,7 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 .odd-skip button:hover{border-color:var(--gold);color:var(--gold);background:rgba(241,196,15,0.1);}
 
 /* Odd canvas game */
-.odd-stage{position:relative;width:100%;height:calc(100vh - 180px);padding:0;overflow:hidden;background:rgba(10,26,15,0.5);border:3px solid var(--leaf-dark);border-radius:20px;}
+.odd-stage{position:relative;width:100%;height:min(100%,calc(100dvh - 190px));max-height:calc(100dvh - 190px);flex:1 1 auto;min-height:0;padding:0;overflow:hidden;background:rgba(10,26,15,0.5);border:3px solid var(--leaf-dark);border-radius:20px;}
 .odd-stage canvas{display:block;width:100%;height:100%;border-radius:17px;cursor:pointer;}
 .odd-hud-overlay{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;z-index:10;}
 .odd-hud-overlay .odd-question{

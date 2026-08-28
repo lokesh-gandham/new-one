@@ -565,7 +565,7 @@ function drawTrajectoryArc(ctx) {
   var launchVX = (slX - bird.x) * LAUNCH_POWER;
   var launchVY = (slY - bird.y) * LAUNCH_POWER;
   var target = oddState.hoveredTarget;
-  var points = target ? getMarkedTrajectoryPoints(bird, target) : [];
+  var points = [];
   if (target) {
     var pullDX = slX - bird.x;
     var pullDY = slY - bird.y;
@@ -580,7 +580,7 @@ function drawTrajectoryArc(ctx) {
   var simVX = launchVX;
   var simVY = launchVY;
 
-  for (var i = 0; i < TRAJECTORY_DOTS && !target; i++) {
+  for (var i = 0; i < TRAJECTORY_DOTS; i++) {
     simX += simVX;
     simY += simVY;
     simVY += GRAVITY;

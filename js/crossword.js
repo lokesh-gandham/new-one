@@ -1,11 +1,12 @@
 /* ========== GAME 2: CROSSWORD (PICTURE CLUE STYLE) ========== */
 
 var crosswordWords = [
-  { word: 'NOSE', clue: 'Organ to smell', row: 0, col: 5, dir: 'down', emoji: '👃', label: 'Nose', cluePos: 'top' },
-  { word: 'TONGUE', clue: 'Organ to taste', row: 1, col: 7, dir: 'down', emoji: '👅', label: 'Tongue', cluePos: 'top' },
-  { word: 'MOUTH', clue: 'Organ to taste & speak', row: 1, col: 4, dir: 'across', emoji: '👄', label: 'Mouth', cluePos: 'right' },
-  { word: 'EYES', clue: 'Organs to see', row: 4, col: 0, dir: 'across', emoji: '👁️', label: 'Eyes', cluePos: 'left' },
-  { word: 'EARS', clue: 'Organs to hear', row: 2, col: 2, dir: 'across', emoji: '👂', label: 'Ears', cluePos: 'left' }
+  { number: 1, word: 'NOSE', clue: 'Organ to smell', row: 0, col: 5, dir: 'down', emoji: '👃', image: '../assets/body-parts%20(2).png', label: 'Nose', cluePos: 'top' },
+  { number: 2, word: 'TONGUE', clue: 'Organ to taste', row: 1, col: 7, dir: 'down', emoji: '👅', image: '../assets/tongue.png', label: 'Tongue', cluePos: 'top' },
+  { number: 3, word: 'MOUTH', clue: 'Organ to taste & speak', row: 1, col: 4, dir: 'across', emoji: '👄', image: '../assets/tongue.png', label: 'Mouth', cluePos: 'right' },
+  { number: 4, word: 'EYES', clue: 'Organs to see', row: 2, col: 2, dir: 'down', emoji: '👁️', image: '../assets/body-parts%20(3).png', label: 'Eyes', cluePos: 'top' },
+  { number: 5, word: 'EARS', clue: 'Organs to hear', row: 2, col: 2, dir: 'across', emoji: '👂', image: '../assets/ear.png', label: 'Ears', cluePos: 'left', clueOffsetY: 64 },
+  { number: 6, word: 'TEETH', clue: 'Organs to chew', row: 4, col: 0, dir: 'across', emoji: '🦷', label: 'Teeth', cluePos: 'left', clueOffsetY: 58, clueOffsetX: -20 }
 ];
 
 var CROSS_ROWS = 7;
@@ -20,7 +21,7 @@ var CROSS_SHAPE = [
   '.......#.'
 ];
 
-var crossState = { grid: [], filled: {}, solved: 0, total: crosswordWords.length };
+var crossState = { grid: [], filled: {}, solved: 0, total: crosswordWords.length, feedback: {} };
 
 function initCrosswordGame() {
   crossState.filled = {
@@ -30,6 +31,7 @@ function initCrosswordGame() {
     '4,2': 'e'
   };
   crossState.solved = 0;
+  crossState.feedback = {};
 
   crossState.grid = [];
   for (var r = 0; r < CROSS_ROWS; r++) {
@@ -81,8 +83,7 @@ function renderCrossword() {
     var pos = getCluePosition(w);
     var filled = isWordComplete(w);
     html += '<div class="cross-clue-emoji' + (filled ? ' done' : '') + '" style="top:' + pos.top + ';left:' + pos.left + ';">';
-    html += '<span class="cross-clue-num">' + (idx + 1) + '</span>';
-    html += '<span class="cross-clue-icon">' + w.emoji + '</span>';
+    html += '<span class="cross-clue-icon">' + (w.image ? '<img src="' + w.image + '" alt="' + w.label + '">' : w.emoji) + '</span>';
     html += '</div>';
   });
 
@@ -100,9 +101,8 @@ function renderCrossword() {
         if (cell.isStart) classes += ' start';
         if (filled) classes += ' filled';
         html += '<div class="' + classes + '" onclick="crossClick(' + r + ',' + c + ')">';
-        if (cell.isStart) {
-          html += '<span class="cell-num">' + (cell.wordIdx + 1) + '</span>';
-        }
+        var startNumbers = getCellStartNumbers(r, c);
+        if (startNumbers) html += '<span class="cell-num">' + startNumbers + '</span>';
         html += '<span class="cell-letter">' + filled + '</span>';
         html += '</div>';
       }
@@ -117,7 +117,7 @@ function renderCrossword() {
   crosswordWords.forEach(function(w, idx) {
     var filled = isWordComplete(w);
     html += '<div class="cross-word-row' + (filled ? ' done' : '') + '">';
-    html += '<span class="cross-word-emoji">' + w.emoji + '</span>';
+    html += '<span class="cross-word-emoji">' + (w.image ? '<img src="' + w.image + '" alt="' + w.label + '">' : w.emoji) + '</span>';
     html += '<span class="cross-word-label">' + w.label + ' — </span>';
     html += '<span class="cross-word-letters">' + getRevealedWord(w) + '</span>';
     html += '</div>';
@@ -134,24 +134,36 @@ function renderCrossword() {
 }
 
 function getCluePosition(w) {
-  var cw = 29, gap = 1;
+  var cw = 45, gap = 2;
+  var gridPadX = 86;
+  var gridPadY = 72;
+  var clueOffsetY = w.clueOffsetY || 0;
+  var clueOffsetX = w.clueOffsetX || 0;
   var cellX = w.col * (cw + gap);
   var cellY = w.row * (cw + gap);
   
   if (w.cluePos === 'top') {
-    return { top: (cellY - 56) + 'px', left: (cellX + cw / 2 - 18) + 'px' };
+    return { top: (cellY + gridPadY - 62 + clueOffsetY) + 'px', left: (gridPadX + cellX + cw / 2 - 22) + 'px' };
   } else if (w.cluePos === 'right') {
     var endX = (w.col + w.word.length) * (cw + gap);
-    return { top: (cellY + cw / 2 - 18) + 'px', left: (endX + 8) + 'px' };
+    return { top: (cellY + gridPadY + cw / 2 - 22 + clueOffsetY) + 'px', left: (gridPadX + endX + 10) + 'px' };
   } else if (w.cluePos === 'left') {
-    return { top: (cellY + cw / 2 - 18) + 'px', left: (cellX - 28) + 'px' };
+    return { top: (cellY + cw / 2 - 22 + clueOffsetY) + 'px', left: (gridPadX + cellX - 46 + clueOffsetX) + 'px' };
   } else {
     if (w.dir === 'down') {
-      return { top: (cellY - 56) + 'px', left: (cellX + cw / 2 - 18) + 'px' };
+      return { top: (cellY + gridPadY - 62 + clueOffsetY) + 'px', left: (gridPadX + cellX + cw / 2 - 22) + 'px' };
     } else {
-      return { top: (cellY + cw / 2 - 18) + 'px', left: (cellX - 28) + 'px' };
+      return { top: (cellY + cw / 2 - 22 + clueOffsetY) + 'px', left: (gridPadX + cellX - 46 + clueOffsetX) + 'px' };
     }
   }
+}
+
+function getCellStartNumbers(row, col) {
+  var numbers = [];
+  crosswordWords.forEach(function(w) {
+    if (w.row === row && w.col === col) numbers.push(w.number);
+  });
+  return numbers.join('/');
 }
 
 function getRevealedWord(w) {
@@ -185,25 +197,79 @@ function crossClick(r, c) {
   var cell = crossState.grid[r][c];
   if (cell.type === 'empty') return;
   var key = r + ',' + c;
-  if (crossState.filled[key]) {
-    delete crossState.filled[key];
-    renderCrossword();
-    return;
+  var correctLetter = getLetterForCell(r, c);
+  var wrongLetter = getWrongLetter(correctLetter);
+  var popup = document.createElement('div');
+  popup.className = 'cross-letter-popout';
+  popup.innerHTML = '<button type="button" onclick="chooseCrossLetter(event, \'' + correctLetter + '\', ' + r + ', ' + c + ')">' + correctLetter.toUpperCase() + '</button>' +
+    '<button type="button" onclick="chooseCrossLetter(event, \'' + wrongLetter + '\', ' + r + ', ' + c + ')">' + wrongLetter.toUpperCase() + '</button>';
+  var target = document.querySelector('.cross-cell[onclick="crossClick(' + r + ',' + c + ')"]');
+  if (target) {
+    document.querySelectorAll('.cross-letter-popout').forEach(function(oldPopup) { oldPopup.remove(); });
+    target.appendChild(popup);
   }
-  var letter = prompt('Enter a letter:');
-  if (letter && letter.trim().length === 1) {
-    crossState.filled[key] = letter.trim().toLowerCase();
-    renderCrossword();
-    updateSolvedCount();
+}
+
+function getLetterForCell(r, c) {
+  var cell = crossState.grid[r][c];
+  if (cell.letter) return cell.letter.toLowerCase();
+  for (var i = 0; i < crosswordWords.length; i++) {
+    var w = crosswordWords[i];
+    for (var j = 0; j < w.word.length; j++) {
+      var wordRow = w.dir === 'down' ? w.row + j : w.row;
+      var wordCol = w.dir === 'across' ? w.col + j : w.col;
+      if (wordRow === r && wordCol === c) return w.word[j].toLowerCase();
+    }
   }
+  return 'e';
+}
+
+function getWrongLetter(correctLetter) {
+  var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  var wrongLetter = correctLetter.toUpperCase();
+  while (wrongLetter === correctLetter.toUpperCase()) {
+    wrongLetter = letters[Math.floor(Math.random() * letters.length)];
+  }
+  return wrongLetter.toLowerCase();
+}
+
+function chooseCrossLetter(event, letter, r, c) {
+  event.stopPropagation();
+  var key = r + ',' + c;
+  crossState.filled[key] = letter;
+  renderCrossword();
+  updateSolvedCount();
 }
 
 function updateSolvedCount() {
   var solved = 0;
-  crosswordWords.forEach(function(w) { if (isWordComplete(w)) solved++; });
+  crosswordWords.forEach(function(w) {
+    if (isWordComplete(w)) {
+      solved++;
+      if (crossState.feedback[w.label] !== 'correct') {
+        crossState.feedback[w.label] = 'correct';
+        showBanner('Correct ' + w.label + '!', 'correct');
+      }
+    } else if (isWordFilled(w) && crossState.feedback[w.label] !== 'correct') {
+      if (crossState.feedback[w.label] !== 'wrong') {
+        crossState.feedback[w.label] = 'wrong';
+        wrongAnswer();
+        showBanner('Wrong ' + w.label + ' - try again', 'wrong');
+      }
+    }
+  });
   crossState.solved = solved;
   var el = document.getElementById('crossCount');
   if (el) el.textContent = solved + '/' + crossState.total + ' Words';
+}
+
+function isWordFilled(w) {
+  for (var i = 0; i < w.word.length; i++) {
+    var r = w.dir === 'down' ? w.row + i : w.row;
+    var c = w.dir === 'across' ? w.col + i : w.col;
+    if (!crossState.filled[r + ',' + c]) return false;
+  }
+  return true;
 }
 
 function checkCrossword() {
@@ -226,7 +292,7 @@ function resetCrosswordGame() {
     '2,4': 'r',
     '1,7': 't',
     '4,2': 'e'
-  }, solved: 0, total: crosswordWords.length };
+  }, solved: 0, total: crosswordWords.length, feedback: {} };
 }
 
 initCrosswordGame();

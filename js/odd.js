@@ -11,9 +11,9 @@ var oddQuestions = [
     { emoji: '🤖', label: 'Robot', img: '../assets/robot-removebg-preview.png' }
   ], correctIdx: 2 },
   { question: 'Which one CANNOT hear?', options: [
-    { emoji: '🍎', label: 'Apple' },
-    { emoji: '📢', label: 'Megaphone' },
-    { emoji: '🔔', label: 'Bell' }
+    { emoji: '🍎', label: 'Apple', img: '../assets/apple-removebg-preview.png' },
+    { emoji: '📢', label: 'Megaphone', img: '../assets/speaker-removebg-preview.png' },
+    { emoji: '🔔', label: 'Bell', img: '../assets/bell-removebg-preview.png' }
   ], correctIdx: 0 }
 ];
 

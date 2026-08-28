@@ -155,11 +155,15 @@ function wrongAnswer() {
 
 /* ========== GAME COMPLETE ========== */
 function showResult(emoji, title, score, xp, combo) {
-  showBanner(title + ' — Score: ' + score, 'achieve');
   launchConfetti();
-  setTimeout(() => {
-    window.location.href = 'sense-safari-game.html';
-  }, 2500);
+  var overlay = document.getElementById('gameResultOverlay');
+  if (!overlay) return;
+  overlay.querySelector('.game-result-emoji').textContent = emoji;
+  overlay.querySelector('.game-result-title').textContent = title;
+  overlay.querySelector('.game-result-score').textContent = '⭐ Score: ' + score + '  |  🔥 Best Combo: x' + combo;
+  overlay.classList.add('show');
+  overlay.querySelector('[data-play-again]').onclick = function() { window.location.reload(); };
+  overlay.querySelector('[data-go-menu]').onclick = function() { window.location.href = 'sense-safari-game.html'; };
 }
 
 /* ========== CONFETTI ========== */

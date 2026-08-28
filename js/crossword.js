@@ -99,8 +99,7 @@ function checkCrossword() {
   
   if (correct === crosswordWords.length) {
     addScore(50);
-    showBanner('🎉 Crossword Complete!', 'achieve');
-    setTimeout(() => showResult('🧩', 'Crossword Complete!', G.score, G.totalXP, G.bestCombo), 1500);
+    showResult('🧩', 'Crossword Complete!', G.score, G.totalXP, G.bestCombo);
   } else {
     showBanner(correct + '/' + crosswordWords.length + ' correct — try again!', 'combo');
   }

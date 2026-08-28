@@ -45,14 +45,14 @@ function renderPoemLevel(li) {
   asteroids.innerHTML = '';
   
   const positions = [
-    { left: '62%', top: '10%' },
-    { left: '80%', top: '22%' },
-    { left: '64%', top: '34%' },
-    { left: '82%', top: '46%' },
-    { left: '66%', top: '60%' },
-    { left: '84%', top: '12%' },
-    { left: '68%', top: '48%' },
-    { left: '86%', top: '34%' }
+    { left: '56%', top: '12%' },
+    { left: '74%', top: '12%' },
+    { left: '90%', top: '12%' },
+    { left: '60%', top: '35%' },
+    { left: '80%', top: '35%' },
+    { left: '56%', top: '58%' },
+    { left: '74%', top: '58%' },
+    { left: '90%', top: '58%' }
   ];
   
   allWords.forEach((word, i) => {
@@ -127,10 +127,13 @@ function shootPoemAsteroid(asteroidEl, word) {
   
   const shipTopY = areaRect.height - 55;
   const laserHeight = shipTopY - targetY;
-  laser.style.left = (targetX - 2) + 'px';
+  laser.style.left = (targetX - 3) + 'px';
   laser.style.top = targetY + 'px';
   laser.style.height = laserHeight + 'px';
   laser.style.display = 'block';
+  laser.style.animation = 'none';
+  laser.offsetHeight;
+  laser.style.animation = 'laserShoot 0.25s ease-out';
   
   setTimeout(() => {
     laser.style.display = 'none';
@@ -180,15 +183,14 @@ function showPoemMessage(text) {
 function checkPoemLevelComplete(li) {
   if (poemState.currentSlot >= poemLevels[li].answers.length) {
     if (li === poemLevels.length - 1) {
-      showBanner('🏆 Poem Blaster Complete!', 'achieve');
-      setTimeout(() => {
-        showResult('🎯', 'Poem Blaster Complete!', G.score, G.totalXP, G.bestCombo);
-      }, 2000);
+      showResult('🏆', 'Poem Blaster Complete!', G.score, G.totalXP, G.bestCombo);
     } else {
-      showBanner('🎉 Mission Complete!', 'achieve');
-      poemState.current = li + 1;
-      renderPoemLevel(li + 1);
-      updatePoemProgress();
+      showPoemMessage('🎉 MISSION COMPLETE!');
+      setTimeout(() => {
+        poemState.current = li + 1;
+        renderPoemLevel(li + 1);
+        updatePoemProgress();
+      }, 1500);
     }
   }
 }

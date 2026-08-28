@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/safari.css">
+<script src="../js/font-guard.js"></script>
 </head>
 <body>
 <div id="bgScene" aria-hidden="true"></div>
@@ -19,12 +20,10 @@
       <div class="side"><button class="gp-back" data-back>Menu</button></div>
       <div class="side">
         <div class="gp-chip score-chip">⭐ <span id="crossScore">0</span></div>
-        <div class="gp-chip" id="crossCount">0/5 Words</div>
       </div>
       <div class="side"><button class="sound-toggle" data-sound-toggle>🔊</button></div>
     </div>
     <div class="game-wrap">
-      <div class="game-title-row"><h2>🧩 Sense Crossword</h2><p>Use the pictures as clues to complete the crossword!</p></div>
       <div class="crossword-stage" id="crosswordStage"></div>
       <div class="game-result-overlay" id="gameResultOverlay">
         <div class="game-result-card">

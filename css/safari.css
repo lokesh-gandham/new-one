@@ -265,7 +265,7 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
               radial-gradient(2px 2px at 700px 200px,rgba(255,255,255,0.6),rgba(0,0,0,0));
   background-size:800px 500px;opacity:0.4;}
 .poem-hud{position:relative;z-index:10;flex-shrink:0;display:flex;justify-content:space-between;align-items:center;
-  gap:10px;flex-wrap:wrap;padding:10px 14px 0;}
+  gap:10px;flex-wrap:wrap;padding:10px 14px 0 20px;}
 .poem-level-card{background:rgba(10,26,15,0.9);border:2px solid var(--gold);border-radius:8px;padding:8px 16px;
   color:var(--gold);font-weight:800;letter-spacing:1px;font-size:13px;}
 .poem-score-card{background:var(--gold);color:#1a1200;padding:6px 16px;border-radius:20px;font-weight:800;font-size:14px;}

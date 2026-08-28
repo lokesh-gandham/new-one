@@ -132,7 +132,8 @@ function updateOddTimerUI() {
 
 function oddTimeout() {
   oddState.launched = false;
-  showResult('⏰', "Time's Up! Play Again?", G.score, G.totalXP, G.bestCombo);
+  speak("Time's Up! Play Again?");
+  showResult('⏰', "Time's Up! Play Again?", G.score, G.totalXP, G.bestCombo, true);
 }
 
 function showOddPopup(text, type) {
@@ -628,12 +629,14 @@ function updatePhysics() {
           t.hit = true;
           addScore(20);
           playSound('correct');
+          speak('Correct!');
           showOddPopup('🎯 Perfect Hit! +20', 'correct');
           document.getElementById('oddInstruction').textContent = '✅ You found the odd one out!';
           setTimeout(function() { nextOddLevel(); }, 1200);
         } else {
           wrongAnswer();
           playSound('wrong');
+          speak('Try again');
           showOddPopup('❌ Wrong! Try again!', 'wrong');
           document.getElementById('oddInstruction').textContent = 'That was part of the group! Try again!';
           setTimeout(function() { resetBird(); }, 800);
@@ -696,6 +699,7 @@ function createExplosion(x, y) {
 function nextOddLevel() {
   if (oddState.current >= oddQuestions.length - 1) {
     if (oddState.timerId) { clearInterval(oddState.timerId); oddState.timerId = null; }
+    speak('Congratulations! Jungle Launcher Complete!');
     showResult('🎯', 'Jungle Launcher Complete!', G.score, G.totalXP, G.bestCombo);
   } else {
     oddState.current++;

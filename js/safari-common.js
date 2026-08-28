@@ -154,8 +154,8 @@ function wrongAnswer() {
 }
 
 /* ========== GAME COMPLETE ========== */
-function showResult(emoji, title, score, xp, combo) {
-  launchConfetti();
+function showResult(emoji, title, score, xp, combo, noConfetti) {
+  if (!noConfetti) launchConfetti();
   var overlay = document.getElementById('gameResultOverlay');
   if (!overlay) return;
   overlay.querySelector('.game-result-emoji').textContent = emoji;
@@ -194,4 +194,17 @@ function shuffle(arr) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+}
+
+/* ========== VOICE (SPEECH) ANNOUNCEMENTS ========== */
+function speak(text) {
+  try {
+    if (!('speechSynthesis' in window)) return;
+    if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US';
+    u.rate = 0.95;
+    u.pitch = 1.1;
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
 }

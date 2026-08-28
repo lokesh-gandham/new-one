@@ -53,7 +53,8 @@ function updatePoemTimerUI() {
 
 function poemTimeout() {
   poemState.isFiring = true;
-  showResult('⏰', 'Time\'s Up! Play Again?', G.score, G.totalXP, G.bestCombo);
+  speak("Time's Up! Play Again?");
+  showResult('⏰', 'Time\'s Up! Play Again?', G.score, G.totalXP, G.bestCombo, true);
 }
 
 function renderPoemLevel(li) {
@@ -124,9 +125,19 @@ function setupPoemAimLine() {
     let mouseX = e.clientX - rect.left;
     mouseX = Math.max(slingW / 2, Math.min(rect.width - slingW / 2, mouseX));
 
+    const bottomY = rect.height - 55;
+    let lineTop = 8;
+
+    const hovered = document.elementFromPoint(e.clientX, e.clientY);
+    if (hovered && hovered.classList && hovered.classList.contains('poem-asteroid')) {
+      const ar = hovered.getBoundingClientRect();
+      const centerY = (ar.top + ar.height / 2) - rect.top;
+      if (centerY < bottomY - 30) lineTop = centerY;
+    }
+
     aimLine.style.left = mouseX + 'px';
-    aimLine.style.top = '8px';
-    aimLine.style.height = Math.max(80, rect.height - 58) + 'px';
+    aimLine.style.top = lineTop + 'px';
+    aimLine.style.height = Math.max(60, bottomY - lineTop) + 'px';
 
     slingshot.style.left = mouseX + 'px';
     slingshot.style.transform = 'translateX(-50%)';
@@ -148,9 +159,17 @@ function shootPoemAsteroid(asteroidEl, word) {
   const laser = document.getElementById('poemLaser');
   const marker = document.getElementById('poemTargetMarker');
   const slingshot = document.getElementById('poemSlingshot');
+  const aimLine = document.getElementById('poemAimLine');
 
   const slingHalf = (slingshot.offsetWidth || 40) / 2;
   const shotX = Math.max(slingHalf, Math.min(areaRect.width - slingHalf, targetX));
+  const shipTopY = areaRect.height - 55;
+  const laserHeight = shipTopY - targetY;
+
+  aimLine.style.left = shotX + 'px';
+  aimLine.style.top = targetY + 'px';
+  aimLine.style.height = laserHeight + 'px';
+  aimLine.style.display = 'none';
 
   slingshot.style.left = shotX + 'px';
   slingshot.style.transform = 'translateX(-50%)';
@@ -159,8 +178,6 @@ function shootPoemAsteroid(asteroidEl, word) {
   marker.style.top = targetY + 'px';
   marker.style.display = 'block';
   
-  const shipTopY = areaRect.height - 55;
-  const laserHeight = shipTopY - targetY;
   laser.style.left = (shotX - 3) + 'px';
   laser.style.top = targetY + 'px';
   laser.style.height = laserHeight + 'px';
@@ -172,6 +189,7 @@ function shootPoemAsteroid(asteroidEl, word) {
   setTimeout(() => {
     laser.style.display = 'none';
     marker.style.display = 'none';
+    aimLine.style.display = 'block';
     poemState.isFiring = false;
     
     const lvl = poemLevels[poemState.current];
@@ -187,6 +205,7 @@ function shootPoemAsteroid(asteroidEl, word) {
       asteroidEl.style.display = 'none';
       addScore(100);
       playSound('correct');
+      speak('Correct!');
       document.getElementById('poemGameScore').textContent = G.score;
       showPoemMessage(`⚡ "${word.toUpperCase()}" SLOTTED!`);
       
@@ -202,30 +221,34 @@ function shootPoemAsteroid(asteroidEl, word) {
     } else {
       wrongAnswer();
       playSound('wrong');
+      speak('Try again');
       showPoemMessage('❌ WRONG WORD FOR THIS SLOT!');
     }
   }, 250);
 }
 
-function showPoemMessage(text) {
+function showPoemMessage(text, duration) {
   const msg = document.getElementById('poemMessage');
   msg.textContent = text;
   msg.style.display = 'block';
-  setTimeout(() => { msg.style.display = 'none'; }, 2000);
+  setTimeout(() => { msg.style.display = 'none'; }, duration || 2000);
 }
 
 function checkPoemLevelComplete(li) {
   if (poemState.currentSlot >= poemLevels[li].answers.length) {
     if (li === poemLevels.length - 1) {
       if (poemState.timerId) { clearInterval(poemState.timerId); poemState.timerId = null; }
+      speak('Congratulations! Poem Blaster Complete!');
       showResult('🏆', 'Poem Blaster Complete!', G.score, G.totalXP, G.bestCombo);
     } else {
-      showPoemMessage('🎉 MISSION COMPLETE!');
+      speak('Mission Complete!');
+      showPoemMessage('🎉 MISSION COMPLETE!', 4000);
       setTimeout(() => {
         poemState.current = li + 1;
         renderPoemLevel(li + 1);
         updatePoemProgress();
-      }, 1500);
+        speak('Starting ' + poemLevels[li + 1].title);
+      }, 3800);
     }
   }
 }

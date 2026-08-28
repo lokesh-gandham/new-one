@@ -357,13 +357,13 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 
 /* Grid area with emoji clues */
 .cross-grid-area{position:relative;flex:0 0 auto;padding:72px 86px 28px 86px;}
-.cross-grid{display:grid;grid-template-columns:repeat(9,45px);grid-template-rows:repeat(7,45px);gap:2px;}
+.cross-grid{display:grid;grid-template-columns:repeat(9,55px);grid-template-rows:repeat(7,55px);gap:2px;}
 
 /* Cells */
 .cross-cell{
-  width:45px;height:45px;border-radius:2px;
+  width:55px;height:55px;border-radius:2px;
   display:flex;align-items:center;justify-content:center;
-  font-family:'Fredoka',sans-serif;font-weight:700;font-size:27px;
+  font-family:'Fredoka',sans-serif;font-weight:700;font-size:30px;
   background:#fff;color:#1a3d24;border:2px solid #d4d4d4;
   transition:all .2s;cursor:pointer;position:relative;
   box-shadow:0 1px 3px rgba(0,0,0,0.1);
@@ -387,8 +387,8 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
   background:var(--leaf);color:#fff;width:20px;height:20px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.3);
 }
-.cross-clue-icon{font-size:42px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));}
-.cross-clue-icon img{display:block;width:44px;height:44px;object-fit:contain;}
+.cross-clue-icon{font-size:48px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));}
+.cross-clue-icon img{display:block;width:50px;height:50px;object-fit:contain;}
 .cross-clue-emoji.done .cross-clue-num{background:#888;}
 .cross-clue-check{position:absolute;right:-8px;bottom:-5px;width:22px;height:22px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;background:var(--success);color:#063b1d;
@@ -402,14 +402,14 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 .cross-letter-popout button:hover{background:var(--gold);color:#1a1200;}
 
 /* Word bank sidebar */
-.cross-wordbank{flex:0 0 270px;display:flex;flex-direction:column;gap:8px;padding-top:8px;}
-.cross-wordbank-title{font-family:'Fredoka',sans-serif;font-size:21px;color:var(--gold);font-weight:700;margin-bottom:5px;}
-.cross-word-row{display:flex;align-items:center;gap:8px;padding:8px 12px;
+.cross-wordbank{flex:0 0 180px;display:flex;flex-direction:column;gap:8px;padding-top:8px;}
+.cross-wordbank-title{font-family:'Fredoka',sans-serif;font-size:18px;color:var(--gold);font-weight:700;margin-bottom:5px;}
+.cross-word-row{display:flex;align-items:center;gap:6px;padding:6px 10px;
   background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid var(--leaf);font-size:19px;}
 .cross-word-row.done{border-left-color:#888;opacity:0.6;}
 .cross-word-emoji{font-size:18px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .cross-word-emoji img{display:block;width:26px;height:26px;object-fit:contain;}
-.cross-word-label{color:var(--ink-dim);font-weight:600;white-space:nowrap;}
+.cross-word-label{color:var(--ink-dim);font-weight:600;white-space:nowrap;font-size:14px;}
 .cross-word-letters{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--ink);letter-spacing:2px;font-size:20px;}
 .cross-word-check{margin-left:auto;color:var(--leaf-glow);font:bold 22px 'Fredoka',sans-serif;}
 .revealed-letter{color:var(--leaf-glow);}

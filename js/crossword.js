@@ -22,6 +22,9 @@ var CROSS_SHAPE = [
 ];
 
 var crossState = { grid: [], filled: {}, solved: 0, total: crosswordWords.length, feedback: {}, finished: false };
+var CROSS_TIMER = 300;
+var crossTimerId = null;
+var crossTimeLeft = CROSS_TIMER;
 
 function initCrosswordGame() {
   crossState.filled = {
@@ -64,6 +67,7 @@ function initCrosswordGame() {
   });
 
   renderCrossword();
+  startCrossTimer();
 }
 
 function renderCrossword() {
@@ -120,8 +124,7 @@ function renderCrossword() {
     var filled = isWordComplete(w);
     html += '<div class="cross-word-row' + (filled ? ' done' : '') + '">';
     html += '<span class="cross-word-emoji">' + (w.image ? '<img src="' + w.image + '" alt="' + w.label + '">' : w.emoji) + '</span>';
-    html += '<span class="cross-word-label">' + w.label + ' — </span>';
-    html += '<span class="cross-word-letters">' + getRevealedWord(w) + '</span>';
+    html += '<span class="cross-word-label">' + w.label + '</span>';
     if (filled) html += '<span class="cross-word-check">✓</span>';
     html += '</div>';
   });
@@ -284,6 +287,7 @@ function updateSolvedCount() {
   if (el) el.textContent = solved + '/' + crossState.total + ' Words';
   if (solved === crossState.total && !crossState.finished) {
     crossState.finished = true;
+    stopCrossTimer();
     setTimeout(function() {
       playSound('correct');
       speak('Crossword complete!');
@@ -323,6 +327,41 @@ function resetCrosswordGame() {
     '1,7': 't',
     '4,2': 'e'
   }, solved: 0, total: crosswordWords.length, feedback: {}, finished: false };
+  stopCrossTimer();
+}
+
+function startCrossTimer() {
+  stopCrossTimer();
+  crossTimeLeft = CROSS_TIMER;
+  updateCrossTimerUI();
+  crossTimerId = setInterval(function() {
+    crossTimeLeft--;
+    updateCrossTimerUI();
+    if (crossTimeLeft <= 0) {
+      stopCrossTimer();
+      crossTimeUp();
+    }
+  }, 1000);
+}
+
+function stopCrossTimer() {
+  if (crossTimerId) { clearInterval(crossTimerId); crossTimerId = null; }
+}
+
+function updateCrossTimerUI() {
+  var el = document.getElementById('crossTimer');
+  if (!el) return;
+  var m = Math.floor(Math.max(0, crossTimeLeft) / 60);
+  var s = Math.max(0, crossTimeLeft) % 60;
+  el.textContent = '⏰ ' + m + ':' + (s < 10 ? '0' + s : s);
+  el.classList.toggle('low', crossTimeLeft <= 30);
+}
+
+function crossTimeUp() {
+  if (crossState.finished) return;
+  crossState.finished = true;
+  speak("Time's Up! Crossword Over!");
+  showResult('⏰', "Time's Up!", G.score, G.totalXP, G.bestCombo, true);
 }
 
 initCrosswordGame();

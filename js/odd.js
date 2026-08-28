@@ -14,27 +14,13 @@ var oddQuestions = [
     { emoji: '🍎', label: 'Apple' },
     { emoji: '📢', label: 'Megaphone' },
     { emoji: '🔔', label: 'Bell' }
-  ], correctIdx: 0 },
-  { question: 'Which one is NOT for seeing?', options: [
-    { emoji: '👁️', label: 'Eyes' },
-    { emoji: '👃', label: 'Nose' },
-    { emoji: '🌳', label: 'Tree' }
-  ], correctIdx: 1 },
-  { question: 'Which one you CANNOT feel?', options: [
-    { emoji: '🪨', label: 'Rock' },
-    { emoji: '🔥', label: 'Fire' },
-    { emoji: '🎵', label: 'Music' }
-  ], correctIdx: 2 },
-  { question: 'Which one is NOT soft?', options: [
-    { emoji: '🧸', label: 'Teddy Bear' },
-    { emoji: '🪨', label: 'Stone' },
-    { emoji: '☁️', label: 'Cloud' }
-  ], correctIdx: 1 }
+  ], correctIdx: 0 }
 ];
 
 var GRAVITY = 0.25;
 var LAUNCH_POWER = 0.35;
 var MAX_PULL = 120;
+var MIN_PULL = 25;
 var TRAJECTORY_DOTS = 30;
 var ODD_TIMER = 120;
 
@@ -55,7 +41,10 @@ var oddState = {
   ctx: null,
   animFrame: null,
   timeLeft: ODD_TIMER,
-  timerId: null
+  timerId: null,
+  demo: false,
+  demoPhase: 0,
+  demoHit: false
 };
 
 function initOddGame() {
@@ -86,7 +75,7 @@ function initOddGame() {
     setupOddEvents();
     loadOddLevel();
     updateOddProgress();
-    startOddTimer();
+    oddDemo();
     renderOddCanvas();
   }
 
@@ -134,6 +123,89 @@ function oddTimeout() {
   oddState.launched = false;
   speak("Time's Up! Play Again?");
   showResult('⏰', "Time's Up! Play Again?", G.score, G.totalXP, G.bestCombo, true);
+}
+
+function oddDemo() {
+  oddState.demo = true;
+  oddState.demoPhase = 0;
+  oddState.demoHit = false;
+  oddState._demoFinishScheduled = false;
+
+  var tgt = getOddDemoTarget();
+  var slX = oddState.slingshot.x;
+  var slY = oddState.slingshot.y - 30;
+  var t = 55;
+  var denom = 1 - LAUNCH_POWER * t;
+  oddState.demoPullX = (tgt.x - slX * LAUNCH_POWER * t) / denom;
+  oddState.demoPullY = (tgt.y - slY * LAUNCH_POWER * t - 0.5 * GRAVITY * t * t) / denom;
+
+  var el = document.getElementById('oddInstruction');
+  if (el) el.textContent = '👀 Watch! Drag the bird back, then let go!';
+}
+
+function oddDemoFinish() {
+  if (!oddState.demo) return;
+  oddState._demoFinishScheduled = false;
+  oddState.demo = false;
+  oddState.demoPhase = 0;
+  oddState.demoHit = false;
+  resetOddState();
+  loadOddLevel();
+  updateOddProgress();
+  startOddTimer();
+  var el = document.getElementById('oddInstruction');
+  if (el) el.textContent = 'Drag the bird back to aim, then release to launch!';
+}
+
+function getOddDemoTarget() {
+  for (var i = 0; i < oddState.targets.length; i++) {
+    if (oddState.targets[i].isOdd) return oddState.targets[i];
+  }
+  return oddState.targets[0] || null;
+}
+
+function oddDemoStep() {
+  var bird = oddState.bird;
+  if (!bird) return;
+  var origin = { x: oddState.slingshot.x, y: oddState.slingshot.y - 30 };
+  var PULL = 110;
+  var HOLD = 40;
+  var RELEASE = PULL + HOLD;
+
+  if (!oddState.launched && oddState.demoPhase < PULL) {
+    var e = oddState.demoPhase / PULL;
+    e = e * e * (3 - 2 * e);
+    bird.x = origin.x + (oddState.demoPullX - origin.x) * e;
+    bird.y = origin.y + (oddState.demoPullY - origin.y) * e;
+    bird.active = true;
+    bird.vx = 0; bird.vy = 0;
+    oddState.dragging = true;
+    oddState.demoPhase++;
+  } else if (!oddState.launched && oddState.demoPhase < RELEASE) {
+    bird.x = oddState.demoPullX;
+    bird.y = oddState.demoPullY;
+    bird.active = true;
+    bird.vx = 0; bird.vy = 0;
+    oddState.dragging = true;
+    oddState.demoPhase++;
+  } else if (!oddState.launched) {
+    var slX = oddState.slingshot.x;
+    var slY = oddState.slingshot.y - 30;
+    bird.vx = (slX - bird.x) * LAUNCH_POWER;
+    bird.vy = (slY - bird.y) * LAUNCH_POWER;
+    oddState.launched = true;
+    oddState.dragging = false;
+    oddState.demoPhase++;
+  } else if (oddState.demoHit) {
+    for (var pi = 0; pi < oddState.particles.length; pi++) {
+      var pp = oddState.particles[pi];
+      pp.x += pp.vx;
+      pp.y += pp.vy;
+      pp.life -= 0.02;
+      pp.size *= 0.98;
+    }
+    oddState.particles = oddState.particles.filter(function(p) { return p.life > 0; });
+  }
 }
 
 function showOddPopup(text, type) {
@@ -202,6 +274,7 @@ function setupOddEvents() {
 
   canvas.onmousedown = canvas.ontouchstart = function(e) {
     e.preventDefault();
+    if (oddState.demo) return;
     var rect = canvas.getBoundingClientRect();
     var pos = getOddPos(e, rect);
     var bird = oddState.bird;
@@ -217,6 +290,7 @@ function setupOddEvents() {
 
   canvas.onmousemove = canvas.ontouchmove = function(e) {
     e.preventDefault();
+    if (oddState.demo) return;
     var rect = canvas.getBoundingClientRect();
     var pos = getOddPos(e, rect);
 
@@ -264,6 +338,7 @@ function setupOddEvents() {
   };
 
   canvas.onmouseup = canvas.ontouchend = function(e) {
+    if (oddState.demo) return;
     if (!oddState.dragging) return;
     oddState.dragging = false;
     launchBird();
@@ -289,6 +364,16 @@ function launchBird() {
 
   var dx = slX - bird.x;
   var dy = slY - bird.y;
+  var pullDist = Math.sqrt(dx * dx + dy * dy);
+
+  if (pullDist < MIN_PULL) {
+    bird.x = slX;
+    bird.y = slY;
+    bird.vx = 0;
+    bird.vy = 0;
+    document.getElementById('oddInstruction').textContent = 'Pull the bird back more, then release!';
+    return;
+  }
 
   bird.vx = dx * LAUNCH_POWER;
   bird.vy = dy * LAUNCH_POWER;
@@ -312,6 +397,8 @@ function renderOddCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBackground(ctx, canvas);
   drawSlingshot(ctx);
+
+  if (oddState.demo) oddDemoStep();
 
   if (oddState.dragging && oddState.bird) {
     drawElasticBand(ctx);
@@ -626,6 +713,15 @@ function updatePhysics() {
 
         createExplosion(t.x, t.y);
 
+        if (oddState.demo) {
+          oddState.demoHit = true;
+          if (!oddState._demoFinishScheduled) {
+            oddState._demoFinishScheduled = true;
+            setTimeout(oddDemoFinish, 1200);
+          }
+          return;
+        }
+
         if (t.isOdd) {
           t.hit = true;
           addScore(20);
@@ -655,7 +751,7 @@ function updatePhysics() {
   });
   oddState.particles = oddState.particles.filter(function(p) { return p.life > 0; });
 
-  if (oddState.launched && !oddState.hitProcessed) {
+  if (oddState.launched && !oddState.hitProcessed && !oddState.demo) {
     var offScreen = bird.x > oddState.canvas.width + 100 || bird.y > oddState.canvas.height + 100 || bird.x < -100 || bird.y < -200;
     var stopped = Math.abs(bird.vx) < 0.3 && Math.abs(bird.vy) < 0.3 && bird.y > oddState.canvas.height - 100;
     if (offScreen || stopped) {

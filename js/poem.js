@@ -216,7 +216,7 @@ function shootPoemAsteroid(asteroidEl, word) {
         document.getElementById('poemInstruction').textContent = `🎯 SHOOT WORD FOR SLOT #${poemState.currentSlot + 1}`;
       } else {
         document.getElementById('poemInstruction').textContent = '🏆 MISSION COMPLETE!';
-        setTimeout(() => checkPoemLevelComplete(poemState.current), 1000);
+        setTimeout(() => checkPoemLevelComplete(poemState.current), 600);
       }
     } else {
       wrongAnswer();
@@ -224,7 +224,7 @@ function shootPoemAsteroid(asteroidEl, word) {
       speak('Try again');
       showPoemMessage('❌ WRONG WORD FOR THIS SLOT!', 1200);
     }
-  }, 250);
+  }, 120);
 }
 
 function showPoemMessage(text, duration) {

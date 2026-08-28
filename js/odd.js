@@ -734,8 +734,13 @@ function drawTargets(ctx) {
     var imgSrc = t.img || null;
     var loadedImg = imgSrc ? loadedImages[imgSrc] : null;
     if (loadedImg && loadedImg.complete && loadedImg.naturalWidth > 0) {
-      var imgSize = t.radius * 1.3;
-      ctx.drawImage(loadedImg, -imgSize / 2, -imgSize / 2 - 4, imgSize, imgSize);
+      var maxDim = t.radius * 1.6;
+      var iw = loadedImg.naturalWidth;
+      var ih = loadedImg.naturalHeight;
+      var scale = Math.min(maxDim / iw, maxDim / ih);
+      var drawW = iw * scale;
+      var drawH = ih * scale;
+      ctx.drawImage(loadedImg, -drawW / 2, -drawH / 2 - 2, drawW, drawH);
     } else {
       ctx.font = '54px serif';
       ctx.textAlign = 'center';

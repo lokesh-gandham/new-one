@@ -5,8 +5,8 @@ var crosswordWords = [
   { number: 2, word: 'TONGUE', clue: 'Organ to taste', row: 1, col: 7, dir: 'down', emoji: '👅', image: '../assets/tongue.png', label: 'Tongue', cluePos: 'top' },
   { number: 3, word: 'MOUTH', clue: 'Organ to taste & speak', row: 1, col: 4, dir: 'across', emoji: '👄', image: '../assets/mouth1-removebg-preview.png', label: 'Mouth', cluePos: 'right' },
   { number: 4, word: 'EYES', clue: 'Organs to see', row: 2, col: 2, dir: 'down', emoji: '👁️', image: '../assets/body-parts%20(3).png', label: 'Eyes', cluePos: 'top' },
-  { number: 5, word: 'EARS', clue: 'Organs to hear', row: 2, col: 2, dir: 'across', emoji: '👂', image: '../assets/ear.png', label: 'Ears', cluePos: 'left', clueOffsetY: 64 },
-  { number: 6, word: 'TEETH', clue: 'Organs to chew', row: 4, col: 0, dir: 'across', emoji: '🦷', label: 'Teeth', cluePos: 'left', clueOffsetY: 58, clueOffsetX: -20 }
+  { number: 5, word: 'EARS', clue: 'Organs to hear', row: 2, col: 2, dir: 'across', emoji: '👂', image: '../assets/ear.png', label: 'Ears', cluePos: 'left', clueOffsetY: 20 },
+  { number: 6, word: 'TEETH', clue: 'Organs to chew', row: 4, col: 0, dir: 'across', emoji: '🦷', label: 'Teeth', cluePos: 'left', clueOffsetY: 24, clueOffsetX: -20 }
 ];
 
 var CROSS_ROWS = 7;
@@ -106,8 +106,11 @@ function renderCrossword() {
         var classes = 'cross-cell';
         if (cell.isStart) classes += ' start';
         if (filled) classes += ' filled';
-        html += '<div class="' + classes + '" onclick="crossClick(' + r + ',' + c + ')">';
         var startNumbers = getCellStartNumbers(r, c);
+        if (startNumbers) {
+          classes += ' has-num';
+        }
+        html += '<div class="' + classes + '" onclick="crossClick(' + r + ',' + c + ')">';
         if (startNumbers) html += '<span class="cell-num">' + startNumbers + '</span>';
         html += '<span class="cell-letter">' + filled + '</span>';
         html += '</div>';
@@ -260,7 +263,7 @@ function getWrongLetter(correctLetter) {
 function chooseCrossLetter(event, letter, r, c) {
   event.stopPropagation();
   var key = r + ',' + c;
-  crossState.filled[key] = letter;
+  crossState.filled[key] = letter.toUpperCase();
   updateSolvedCount();
   renderCrossword();
 }

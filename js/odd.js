@@ -272,22 +272,36 @@ function loadOddLevel() {
   var ch = canvas.height;
   var count = q.options.length;
   var targetX = cw * 0.78;
-  var labelFootprint = 82;
-  var desiredSpacing = 145;
-  var spacing = Math.min(desiredSpacing, (ch - 60 - labelFootprint) / Math.max(count - 1, 1));
-  spacing = Math.max(135, spacing);
-  var topY = 60;
+
+  var radius = Math.min(48, Math.max(34, (ch - 190) / 6));
+  var labelGap = 6;
+  var labelBoxH = Math.min(32, Math.max(24, ch / 18));
+  var topY = 15;
+  var bottomMargin = 20;
+  var minSpacing = 2 * radius + labelGap + labelBoxH;
+  var foot = radius + labelGap + labelBoxH;
+  var lastLabelBottom = ch - bottomMargin;
+  var maxLastCenter = lastLabelBottom - radius - labelGap - labelBoxH;
+  var spacing = Math.min(145, (maxLastCenter - (topY + radius)) / Math.max(count - 1, 1));
+  spacing = Math.max(minSpacing, spacing);
+  var stackHeight = spacing * Math.max(count - 1, 1) + foot;
+  topY = Math.max(8, Math.min(topY, maxLastCenter - radius - spacing * Math.max(count - 1, 1)));
+  spacing = Math.max(minSpacing, spacing);
 
   q.options.forEach(function(opt, i) {
     oddState.targets.push({
       x: targetX,
-      y: topY + spacing * i,
-      radius: 48,
+      y: topY + radius + spacing * i,
+      radius: radius,
       emoji: opt.emoji,
       label: opt.label,
       img: opt.img || null,
       isOdd: i === q.correctIdx,
-      hit: false
+      hit: false,
+      labelGap: labelGap,
+      labelBoxH: labelBoxH,
+      labelFont: Math.round(Math.max(15, radius * 0.42)),
+      emojiFont: Math.round(radius * 1.125)
     });
   });
 
@@ -742,7 +756,7 @@ function drawTargets(ctx) {
       var drawH = ih * scale;
       ctx.drawImage(loadedImg, -drawW / 2, -drawH / 2 - 2, drawW, drawH);
     } else {
-      ctx.font = '54px serif';
+      ctx.font = t.emojiFont + 'px serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(t.emoji, 0, -6);
@@ -750,16 +764,16 @@ function drawTargets(ctx) {
 
     ctx.fillStyle = 'rgba(10,26,15,0.7)';
     var tw = ctx.measureText(t.label).width;
-    var boxW = tw + 16;
-    var boxH = 26;
+    var boxW = tw + 18;
+    var boxH = t.labelBoxH;
     var boxX = -boxW / 2;
-    var boxY = t.radius + 8;
+    var boxY = t.radius + t.labelGap;
     ctx.beginPath();
     ctx.roundRect(boxX, boxY, boxW, boxH, 4);
     ctx.fill();
 
     ctx.fillStyle = '#f5f5dc';
-    ctx.font = 'bold 16px Fredoka, Arial';
+    ctx.font = 'bold ' + t.labelFont + 'px Fredoka, Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(t.label, 0, boxY + boxH / 2);

@@ -158,7 +158,7 @@ function oddDemo() {
 
   var tgt = getOddDemoTarget();
   var slX = oddState.slingshot.x;
-  var slY = oddState.slingshot.y - 30;
+  var slY = oddState.slingshot.y - 112;
   var t = 55;
   var denom = 1 - LAUNCH_POWER * t;
   oddState.demoPullX = (tgt.x - slX * LAUNCH_POWER * t) / denom;
@@ -192,7 +192,7 @@ function getOddDemoTarget() {
 function oddDemoStep() {
   var bird = oddState.bird;
   if (!bird) return;
-  var origin = { x: oddState.slingshot.x, y: oddState.slingshot.y - 30 };
+  var origin = { x: oddState.slingshot.x, y: oddState.slingshot.y - 112 };
   var PULL = 110;
   var HOLD = 40;
   var RELEASE = PULL + HOLD;
@@ -215,7 +215,7 @@ function oddDemoStep() {
     oddState.demoPhase++;
   } else if (!oddState.launched) {
     var slX = oddState.slingshot.x;
-    var slY = oddState.slingshot.y - 30;
+    var slY = oddState.slingshot.y - 112;
     bird.vx = (slX - bird.x) * LAUNCH_POWER;
     bird.vy = (slY - bird.y) * LAUNCH_POWER;
     oddState.launched = true;
@@ -261,7 +261,7 @@ function loadOddLevel() {
 
   oddState.bird = {
     x: oddState.slingshot.x,
-    y: oddState.slingshot.y - 30,
+    y: oddState.slingshot.y - 112,
     radius: 24,
     vx: 0, vy: 0,
     active: true
@@ -364,7 +364,7 @@ function setupOddEvents() {
     }
 
     var slX = oddState.slingshot.x;
-    var slY = oddState.slingshot.y - 30;
+    var slY = oddState.slingshot.y - 112;
     var dx = pos.x - slX;
     var dy = pos.y - slY;
     var dist = Math.sqrt(dx * dx + dy * dy);
@@ -401,7 +401,7 @@ function getOddPos(e, rect) {
 function launchBird() {
   var bird = oddState.bird;
   var slX = oddState.slingshot.x;
-  var slY = oddState.slingshot.y - 30;
+  var slY = oddState.slingshot.y - 112;
   var target = oddState.hoveredTarget;
 
   var dx = slX - bird.x;
@@ -574,7 +574,7 @@ function getMarkedTrajectoryPoints(bird, target) {
 function drawTrajectoryArc(ctx) {
   var bird = oddState.bird;
   var slX = oddState.slingshot.x;
-  var slY = oddState.slingshot.y - 30;
+  var slY = oddState.slingshot.y - 112;
 
   var launchVX = (slX - bird.x) * LAUNCH_POWER;
   var launchVY = (slY - bird.y) * LAUNCH_POWER;
@@ -896,7 +896,7 @@ function resetBird() {
   var bird = oddState.bird;
   if (!bird) return;
   bird.x = oddState.slingshot.x;
-  bird.y = oddState.slingshot.y - 30;
+  bird.y = oddState.slingshot.y - 112;
   bird.vx = 0;
   bird.vy = 0;
   bird.active = true;

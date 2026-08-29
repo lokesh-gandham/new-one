@@ -277,6 +277,7 @@ function updateSolvedCount() {
         crossState.feedback[w.label] = 'correct';
         playSound('correct');
         speak('Correct ' + w.label);
+        addScore(20);
         showBanner('Correct ' + w.label + '!', 'correct');
       }
     } else if (isWordFilled(w) && crossState.feedback[w.label] !== 'correct') {

@@ -44,11 +44,13 @@ function updateHUD() {
   const oddScore = document.getElementById('oddScore');
   const poemCombo = document.getElementById('poemCombo');
   const oddCombo = document.getElementById('oddCombo');
+  const crossCombo = document.getElementById('crossCombo');
   if (poemScore) poemScore.textContent = G.score;
   if (crossScore) crossScore.textContent = G.score;
   if (oddScore) oddScore.textContent = G.score;
   if (poemCombo) poemCombo.textContent = 'x' + G.combo;
   if (oddCombo) oddCombo.textContent = 'x' + G.combo;
+  if (crossCombo) crossCombo.textContent = 'x' + G.combo;
 }
 
 /* ========== SOUND TOGGLE ========== */

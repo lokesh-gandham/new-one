@@ -761,21 +761,11 @@ function drawTargets(ctx) {
       ctx.fillText(t.emoji, 0, -6);
     }
 
-    ctx.fillStyle = '#d8ddf0';
-    var tw = ctx.measureText(t.label).width;
-    var boxW = tw + 18;
-    var boxH = t.labelBoxH;
-    var boxX = -boxW / 2;
-    var boxY = t.radius + t.labelGap;
-    ctx.beginPath();
-    ctx.roundRect(boxX, boxY, boxW, boxH, 4);
-    ctx.fill();
-
     ctx.fillStyle = '#1a1a1a';
     ctx.font = 'bold ' + t.labelFont + 'px Fredoka, Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(t.label, 0, boxY + boxH / 2);
+    ctx.fillText(t.label, 0, t.radius + t.labelGap + t.labelBoxH / 2);
 
     ctx.restore();
   });

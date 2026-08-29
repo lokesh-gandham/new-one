@@ -8,6 +8,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/safari.css">
 <script src="../js/font-guard.js"></script>
+<script>
+if (history.scrollRestoration) history.scrollRestoration = 'manual';
+window.addEventListener('pageshow', function (e) {
+  window.scrollTo(0, 0);
+  var m = document.getElementById('screen-menu');
+  if (m) { m.scrollTop = 0; m.scrollLeft = 0; }
+});
+</script>
 </head>
 <body>
 <div id="bgScene" aria-hidden="true"></div>
@@ -85,6 +93,9 @@ function createParticles() {
   }
 }
 createParticles();
+window.scrollTo(0, 0);
+var menu = document.getElementById('screen-menu');
+if (menu) { menu.scrollTop = 0; menu.scrollLeft = 0; }
 </script>
 </body>
 </html>

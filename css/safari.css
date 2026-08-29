@@ -11,6 +11,9 @@
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;overflow-x:hidden;touch-action:manipulation;}
+
+/* Horizontal pan guard for the scrolling menu/app containers */
+.app{overflow-x:hidden;}
 html{scrollbar-width:none;-ms-overflow-style:none;scrollbar-gutter:stable;}
 html::-webkit-scrollbar{display:none;}
 html.fonts-loading body{opacity:0;}
@@ -133,7 +136,8 @@ button{font-family:inherit;}
 }
 
 /* ---------- MAIN MENU ---------- */
-#screen-menu.active{height:100vh;height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+#screen-menu.active{height:100vh;height:100dvh;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;scrollbar-gutter:stable;}
+#screen-menu.active::-webkit-scrollbar{display:none;}
 #screen-menu{padding:0 0 60px;}
 .menu-hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 18px 20px;}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:9px;padding:7px 16px;border:1px solid var(--edge);border-radius:999px;
@@ -356,14 +360,14 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 .cross-layout{display:flex;align-items:flex-start;justify-content:center;gap:32px;flex:1;min-height:0;overflow:hidden;padding-top:10px;}
 
 /* Grid area with emoji clues */
-.cross-grid-area{position:relative;flex:0 0 auto;padding:50px 86px 12px 86px;}
-.cross-grid{display:grid;grid-template-columns:repeat(9,55px);grid-template-rows:repeat(7,55px);gap:2px;}
+.cross-grid-area{position:relative;flex:0 0 auto;padding:60px 72px 12px 72px;}
+.cross-grid{display:grid;grid-template-columns:repeat(9,64px);grid-template-rows:repeat(7,64px);gap:2px;}
 
 /* Cells */
 .cross-cell{
-  width:55px;height:55px;border-radius:2px;
+  width:64px;height:64px;border-radius:2px;
   display:flex;align-items:center;justify-content:center;
-  font-family:'Fredoka',sans-serif;font-weight:700;font-size:30px;
+  font-family:'Fredoka',sans-serif;font-weight:700;font-size:34px;
   background:#fff;color:#1a3d24;border:2px solid #d4d4d4;
   transition:all .2s;cursor:pointer;position:relative;
   box-shadow:0 1px 3px rgba(0,0,0,0.1);
@@ -374,8 +378,8 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 .cross-cell:active{transform:scale(0.95);}
 
 /* Cell number (top-left corner) */
-.cell-num{position:absolute;top:4px;left:6px;font-size:12px;font-weight:700;color:#666;line-height:1;}
-.cell-letter{font-size:27px;font-weight:700;}
+.cell-num{position:absolute;top:5px;left:7px;font-size:13px;font-weight:700;color:#666;line-height:1;}
+.cell-letter{font-size:34px;font-weight:700;}
 
 /* Emoji clues positioned around the grid */
 .cross-clue-emoji{
@@ -388,7 +392,7 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
   display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.3);
 }
 .cross-clue-icon{font-size:48px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));}
-.cross-clue-icon img{display:block;width:50px;height:50px;object-fit:contain;}
+.cross-clue-icon img{display:block;width:48px;height:48px;object-fit:contain;}
 .cross-clue-emoji.done .cross-clue-num{background:#888;}
 .cross-clue-check{position:absolute;right:-8px;bottom:-5px;width:22px;height:22px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;background:var(--success);color:#063b1d;
@@ -422,8 +426,23 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 .crossword-actions{flex-shrink:0;text-align:center;padding-top:4px;}
 @media(max-width:720px){
   .cross-layout{flex-direction:column;align-items:center;overflow:hidden;}
-  .cross-grid-area{padding:50px 58px 12px 58px;}
+  .cross-grid-area{padding:50px 44px 12px 44px;}
+  .cross-grid{grid-template-columns:repeat(9,42px);grid-template-rows:repeat(7,42px);gap:2px;}
+  .cross-cell{width:42px;height:42px;font-size:23px;}
+  .cell-letter{font-size:23px;}
   .cross-wordbank{flex:0 0 auto;width:100%;}
+}
+@media(min-width:721px) and (max-width:1100px){
+  .cross-grid-area{padding-left:52px;padding-right:52px;}
+  .cross-grid{grid-template-columns:repeat(9,52px);grid-template-rows:repeat(7,52px);}
+  .cross-cell{width:52px;height:52px;font-size:27px;}
+  .cell-letter{font-size:27px;}
+}
+@media(min-width:721px) and (max-height:820px){
+  .cross-grid-area{padding-top:54px;padding-left:60px;padding-right:60px;}
+  .cross-grid{grid-template-columns:repeat(9,48px);grid-template-rows:repeat(7,48px);}
+  .cross-cell{width:48px;height:48px;font-size:25px;}
+  .cell-letter{font-size:25px;}
 }
 @media(max-height:760px){
   .cross-layout{transform:none;margin-bottom:0;}

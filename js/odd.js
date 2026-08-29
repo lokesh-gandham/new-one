@@ -808,14 +808,21 @@ function updatePhysics() {
   }
 
   if (!oddState.hitProcessed) {
+    var closestTarget = null;
+    var closestDist = Infinity;
     for (var i = 0; i < oddState.targets.length; i++) {
       var t = oddState.targets[i];
       if (t.hit) continue;
       var dx = bird.x - t.x;
       var dy = bird.y - t.y;
       var dist = Math.sqrt(dx * dx + dy * dy);
-
-      if (dist < bird.radius + t.radius) {
+      if (dist < bird.radius + t.radius && dist < closestDist) {
+        closestDist = dist;
+        closestTarget = t;
+      }
+    }
+    if (closestTarget) {
+        var t = closestTarget;
         oddState.hitProcessed = true;
         oddState.answered = true;
 
@@ -852,7 +859,6 @@ function updatePhysics() {
         }
         return;
       }
-    }
   }
 
   oddState.particles.forEach(function(p) {

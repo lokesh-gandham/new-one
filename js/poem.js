@@ -209,7 +209,7 @@ function shootPoemAsteroid(asteroidEl, word) {
       playSound('correct');
       speak('Correct!');
       document.getElementById('poemGameScore').textContent = G.score;
-      showPoemMessage(`⚡ "${word.toUpperCase()}" SLOTTED!`);
+      showPoemMessage(`⚡ "${word.toUpperCase()}" SLOTTED!`, 2000, 'correct');
       
       poemState.currentSlot++;
       
@@ -230,15 +230,25 @@ function shootPoemAsteroid(asteroidEl, word) {
       wrongAnswer();
       playSound('wrong');
       speak('Try again');
-      showPoemMessage('❌ WRONG WORD FOR THIS SLOT!', 1200);
+      showPoemMessage('❌ WRONG WORD FOR THIS SLOT!', 1200, 'wrong');
     }
   }, 120);
 }
 
-function showPoemMessage(text, duration) {
+function showPoemMessage(text, duration, type) {
   const msg = document.getElementById('poemMessage');
   msg.textContent = text;
   msg.style.display = 'block';
+  if (type === 'correct') {
+    msg.style.borderColor = '#2e7d32';
+    msg.style.boxShadow = '0 8px 28px rgba(46,125,50,0.25)';
+  } else if (type === 'wrong') {
+    msg.style.borderColor = '#c62828';
+    msg.style.boxShadow = '0 8px 28px rgba(198,40,40,0.25)';
+  } else {
+    msg.style.borderColor = '#d8d0e8';
+    msg.style.boxShadow = '0 8px 28px rgba(0,0,0,0.18)';
+  }
   setTimeout(() => { msg.style.display = 'none'; }, duration || 2000);
 }
 

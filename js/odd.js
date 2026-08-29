@@ -273,20 +273,19 @@ function loadOddLevel() {
   var count = q.options.length;
   var targetX = cw * 0.78;
 
-  var radius = Math.min(48, Math.max(34, (ch - 190) / 6));
+  var radius = 48;
   var labelGap = 6;
-  var labelBoxH = Math.min(32, Math.max(24, ch / 18));
+  var labelBoxH = 30;
   var topY = 15;
-  var bottomMargin = 20;
+  var bottomMargin = 10;
   var minSpacing = 2 * radius + labelGap + labelBoxH;
   var foot = radius + labelGap + labelBoxH;
   var lastLabelBottom = ch - bottomMargin;
   var maxLastCenter = lastLabelBottom - radius - labelGap - labelBoxH;
-  var spacing = Math.min(145, (maxLastCenter - (topY + radius)) / Math.max(count - 1, 1));
+  var spacing = Math.min(160, (maxLastCenter - (topY + radius)) / Math.max(count - 1, 1));
   spacing = Math.max(minSpacing, spacing);
-  var stackHeight = spacing * Math.max(count - 1, 1) + foot;
-  topY = Math.max(8, Math.min(topY, maxLastCenter - radius - spacing * Math.max(count - 1, 1)));
-  spacing = Math.max(minSpacing, spacing);
+  topY = Math.max(8, maxLastCenter - radius - spacing * Math.max(count - 1, 1));
+  if (topY < 8) topY = 8;
 
   q.options.forEach(function(opt, i) {
     oddState.targets.push({
@@ -300,8 +299,8 @@ function loadOddLevel() {
       hit: false,
       labelGap: labelGap,
       labelBoxH: labelBoxH,
-      labelFont: Math.round(Math.max(15, radius * 0.42)),
-      emojiFont: Math.round(radius * 1.125)
+      labelFont: 20,
+      emojiFont: 54
     });
   });
 
@@ -739,7 +738,7 @@ function drawTargets(ctx) {
     ctx.arc(0, 0, t.radius, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.strokeStyle = '#c5cae9';
+    ctx.strokeStyle = '#a8b0d0';
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(0, 0, t.radius, 0, Math.PI * 2);
@@ -762,7 +761,7 @@ function drawTargets(ctx) {
       ctx.fillText(t.emoji, 0, -6);
     }
 
-    ctx.fillStyle = 'rgba(232,234,246,0.85)';
+    ctx.fillStyle = '#d8ddf0';
     var tw = ctx.measureText(t.label).width;
     var boxW = tw + 18;
     var boxH = t.labelBoxH;

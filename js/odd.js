@@ -734,12 +734,12 @@ function drawTargets(ctx) {
     ctx.save();
     ctx.translate(t.x, t.y);
 
-    ctx.fillStyle = 'rgba(10,26,15,0.85)';
+    ctx.fillStyle = '#e8eaf6';
     ctx.beginPath();
     ctx.arc(0, 0, t.radius, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.strokeStyle = '#2ecc71';
+    ctx.strokeStyle = '#c5cae9';
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(0, 0, t.radius, 0, Math.PI * 2);
@@ -762,7 +762,7 @@ function drawTargets(ctx) {
       ctx.fillText(t.emoji, 0, -6);
     }
 
-    ctx.fillStyle = 'rgba(10,26,15,0.7)';
+    ctx.fillStyle = 'rgba(232,234,246,0.85)';
     var tw = ctx.measureText(t.label).width;
     var boxW = tw + 18;
     var boxH = t.labelBoxH;
@@ -772,7 +772,7 @@ function drawTargets(ctx) {
     ctx.roundRect(boxX, boxY, boxW, boxH, 4);
     ctx.fill();
 
-    ctx.fillStyle = '#f5f5dc';
+    ctx.fillStyle = '#1a1a1a';
     ctx.font = 'bold ' + t.labelFont + 'px Fredoka, Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';

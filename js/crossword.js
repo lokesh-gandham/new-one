@@ -21,7 +21,7 @@ var CROSS_SHAPE = [
   '.......#.'
 ];
 
-var crossState = { grid: [], filled: {}, solved: 0, total: crosswordWords.length, feedback: {}, finished: false };
+var crossState = { grid: [], filled: {}, hintKeys: [], solved: 0, total: crosswordWords.length, feedback: {}, finished: false };
 var CROSS_TIMER = 300;
 var crossTimerId = null;
 var crossTimeLeft = CROSS_TIMER;
@@ -33,6 +33,7 @@ function initCrosswordGame() {
     '1,7': 't',
     '4,2': 'e'
   };
+  crossState.hintKeys = Object.keys(crossState.filled);
   crossState.solved = 0;
   crossState.feedback = {};
   crossState.finished = false;
@@ -281,13 +282,22 @@ function updateSolvedCount() {
         showBanner('Correct ' + w.label + '!', 'correct');
       }
     } else if (isWordFilled(w) && crossState.feedback[w.label] !== 'correct') {
-      if (crossState.feedback[w.label] !== 'wrong') {
-        crossState.feedback[w.label] = 'wrong';
-        wrongAnswer();
-        playSound('wrong');
-        speak('Try again');
-        showBanner('Wrong ' + w.label + ' - try again', 'wrong');
-      }
+      crossState.feedback[w.label] = 'wrong';
+      wrongAnswer();
+      playSound('wrong');
+      speak('Try again');
+      showBanner('Wrong ' + w.label + ' - try again', 'wrong');
+      var hintKeys = crossState.hintKeys || [];
+      var chars = w.word.split('');
+      chars.forEach(function(ch, i) {
+        var wr = w.dir === 'down' ? w.row + i : w.row;
+        var wc = w.dir === 'across' ? w.col + i : w.col;
+        var k = wr + ',' + wc;
+        if (hintKeys.indexOf(k) === -1) {
+          delete crossState.filled[k];
+        }
+      });
+      crossState.feedback[w.label] = undefined;
     }
   });
   crossState.solved = solved;
@@ -334,7 +344,7 @@ function resetCrosswordGame() {
     '2,4': 'r',
     '1,7': 't',
     '4,2': 'e'
-  }, solved: 0, total: crosswordWords.length, feedback: {}, finished: false };
+  }, hintKeys: ['0,5', '2,4', '1,7', '4,2'], solved: 0, total: crosswordWords.length, feedback: {}, finished: false };
   stopCrossTimer();
 }
 

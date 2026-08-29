@@ -434,9 +434,10 @@ function launchBird() {
 }
 
 function getTargetLaunchVelocity(bird, target, pullDist) {
-  var flightTime = 34;
   var targetDX = target.x - bird.x;
   var targetDY = target.y - bird.y;
+  var horizDist = Math.abs(targetDX);
+  var flightTime = Math.max(18, Math.min(40, Math.round(horizDist / 14)));
   return {
     vx: targetDX / flightTime,
     vy: (targetDY - 0.5 * GRAVITY * flightTime * flightTime) / flightTime
@@ -808,21 +809,32 @@ function updatePhysics() {
   }
 
   if (!oddState.hitProcessed) {
-    var closestTarget = null;
+    var intended = oddState.targetedItem;
+    var hitTarget = null;
     var closestDist = Infinity;
-    for (var i = 0; i < oddState.targets.length; i++) {
-      var t = oddState.targets[i];
-      if (t.hit) continue;
-      var dx = bird.x - t.x;
-      var dy = bird.y - t.y;
+
+    if (intended && !intended.hit) {
+      var dx = bird.x - intended.x;
+      var dy = bird.y - intended.y;
       var dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < bird.radius + t.radius && dist < closestDist) {
-        closestDist = dist;
-        closestTarget = t;
+      if (dist < bird.radius + intended.radius) {
+        hitTarget = intended;
+      }
+    } else {
+      for (var i = 0; i < oddState.targets.length; i++) {
+        var t = oddState.targets[i];
+        if (t.hit) continue;
+        var dx = bird.x - t.x;
+        var dy = bird.y - t.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < bird.radius + t.radius && dist < closestDist) {
+          closestDist = dist;
+          hitTarget = t;
+        }
       }
     }
-    if (closestTarget) {
-        var t = closestTarget;
+    if (hitTarget) {
+        var t = hitTarget;
         oddState.hitProcessed = true;
         oddState.answered = true;
 

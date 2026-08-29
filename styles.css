@@ -4,11 +4,19 @@
     box-sizing: border-box;
 }
 
+/* Match the scrollbar/overflow handling used on every other page (css/safari.css)
+   so the visible content width is identical here and there — otherwise a native
+   scrollbar showing on one page and not the other shifts the whole layout
+   sideways when you navigate between them. */
+html, body { overflow-x: hidden; touch-action: manipulation; }
+html { scrollbar-width: none; -ms-overflow-style: none; scrollbar-gutter: stable; }
+html::-webkit-scrollbar { display: none; }
+
 html.fonts-loading body{opacity:0;}
 html.fonts-ready body{animation:fontFadeIn .45s ease;}
 @keyframes fontFadeIn{from{opacity:0;}to{opacity:1;}}
 body {
-    font-family: 'Nunito', 'Fredoka', sans-serif;
+    font-family:'Livvic', sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
 }
@@ -59,7 +67,7 @@ body {
 .subject {
     padding: 8px 20px;
     border-radius: 20px;
-    font-weight: bold;
+    font-weight:400;
     font-size: 14px;
     text-transform: uppercase;
 }
@@ -68,7 +76,7 @@ body {
 .technology { background: #4ecdc4; color: white; }
 .engineering { background: #45b7d1; color: white; }
 .arts { background: #96ceb4; color: white; }
-.math { background: #feca57; color: #333; }
+.math { background: #feca57; color: #1a1a1a; }
 
 .theme-card {
     background: white;
@@ -88,8 +96,9 @@ body {
 }
 
 .theme-card h1 {
-    color: #333;
+    color: #1a1a1a;
     font-size: 28px;
+    font-weight: 400;
     margin-bottom: 15px;
 }
 
@@ -104,14 +113,14 @@ body {
     padding: 5px 12px;
     border-radius: 15px;
     font-size: 12px;
-    font-weight: bold;
+    font-weight:400;
 }
 
-.thinking { background: #e3f2fd; color: #1976d2; }
-.creativity { background: #fff3e0; color: #f57c00; }
+.thinking { background: #e3f2fd; color: #1a1a1a; }
+.creativity { background: #fff3e0; color: #1a1a1a; }
 
 .theme-description {
-    color: #666;
+    color: #1a1a1a;
     font-size: 16px;
     margin-bottom: 25px;
     line-height: 1.6;
@@ -138,7 +147,7 @@ body {
     border: none;
     padding: 15px 50px;
     font-size: 20px;
-    font-weight: bold;
+    font-weight:400;
     border-radius: 30px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -170,7 +179,7 @@ body {
     color: white;
     padding: 10px 25px;
     border-radius: 20px;
-    font-weight: bold;
+    font-weight:400;
     font-size: 16px;
 }
 
@@ -178,8 +187,8 @@ body {
     background: white;
     padding: 10px 25px;
     border-radius: 20px;
-    font-weight: bold;
-    color: #333;
+    font-weight:400;
+    color: #1a1a1a;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
@@ -202,7 +211,7 @@ body {
 }
 
 .poem-card h2 {
-    color: #ff6b6b;
+    color: #1a1a1a;
     margin-bottom: 20px;
     font-size: 22px;
 }
@@ -210,7 +219,7 @@ body {
 .poem-line {
     margin-bottom: 15px;
     font-size: 16px;
-    color: #333;
+    color: #1a1a1a;
     line-height: 2;
     display: flex;
     align-items: center;
@@ -250,8 +259,8 @@ body {
 }
 
 .blank-text {
-    font-weight: bold;
-    color: #667eea;
+    font-weight:400;
+    color: #1a1a1a;
 }
 
 .word-bank {
@@ -273,7 +282,7 @@ body {
     padding: 10px 20px;
     border-radius: 25px;
     cursor: grab;
-    font-weight: bold;
+    font-weight:400;
     font-size: 14px;
     transition: all 0.3s ease;
     user-select: none;
@@ -303,7 +312,7 @@ body {
 .check-button, .reset-button {
     padding: 12px 35px;
     font-size: 16px;
-    font-weight: bold;
+    font-weight:400;
     border: none;
     border-radius: 25px;
     cursor: pointer;
@@ -334,7 +343,7 @@ body {
     text-align: center;
     margin-top: 20px;
     font-size: 24px;
-    font-weight: bold;
+    font-weight:400;
     color: white;
     min-height: 40px;
 }

@@ -11,11 +11,11 @@ const G = {
 
 // Persist total XP across pages so the menu can show cumulative progress
 try {
-  G.totalXP = parseInt(sessionStorage.getItem('safariXP') || '0', 10);
+  G.totalXP = parseInt(sessionStorage.getItem('questXP') || '0', 10);
 } catch (e) { G.totalXP = 0; }
 
 function saveXP() {
-  try { sessionStorage.setItem('safariXP', String(G.totalXP)); } catch (e) {}
+  try { sessionStorage.setItem('questXP', String(G.totalXP)); } catch (e) {}
 }
 
 /* ========== PARTICLES ========== */

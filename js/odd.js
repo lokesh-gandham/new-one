@@ -47,11 +47,24 @@ var MIN_PULL = 25;
 var TRAJECTORY_DOTS = 30;
 var ODD_TIMER = 120;
 
+/* On big monitors the canvas is much larger than a laptop's, leaving a lot of
+   empty space. oddScale grows the bird, slingshot and option targets to fill
+   that space. It is clamped to 1 at laptop sizes so those layouts are
+   completely unchanged. */
+var ODD_BASE_W = 940;
+var ODD_BASE_H = 560;
+var oddScale = 1;
+function computeOddScale(canvas) {
+  if (!canvas || !canvas.width || !canvas.height) return 1;
+  var s = Math.min(canvas.width / ODD_BASE_W, canvas.height / ODD_BASE_H);
+  return Math.max(1, Math.min(s, 1.9));
+}
+
 var oddState = {
   current: 0,
   bird: null,
   targets: [],
-  slingshot: { x: 220, y: 420 },
+  slingshot: { x: 220, y: 420, h: 112 },
   dragging: false,
   dragStart: { x: 0, y: 0 },
   hoveredTarget: null,
@@ -93,8 +106,12 @@ function initOddGame() {
     if (!sizeCanvas()) { setTimeout(startGame, 100); return; }
     oddState.canvas = canvas;
     oddState.ctx = canvas.getContext('2d');
-    oddState.slingshot.x = 220;
-    oddState.slingshot.y = canvas.height - 80;
+    oddScale = computeOddScale(canvas);
+    oddState.slingshot.x = Math.round(200 * (0.65 + 0.35 * oddScale));
+    oddState.slingshot.y = canvas.height - Math.round(80 * oddScale);
+    oddState.slingshot.h = Math.round(112 * oddScale);
+    MAX_PULL = 120 * oddScale;
+    MIN_PULL = 25 * oddScale;
     setupOddEvents();
     preloadOptionImages(function() {
       loadOddLevel();
@@ -158,7 +175,7 @@ function oddDemo() {
 
   var tgt = getOddDemoTarget();
   var slX = oddState.slingshot.x;
-  var slY = oddState.slingshot.y - 112;
+  var slY = oddState.slingshot.y - (oddState.slingshot.h || 112);
   var t = 55;
   var denom = 1 - LAUNCH_POWER * t;
   oddState.demoPullX = (tgt.x - slX * LAUNCH_POWER * t) / denom;
@@ -192,7 +209,7 @@ function getOddDemoTarget() {
 function oddDemoStep() {
   var bird = oddState.bird;
   if (!bird) return;
-  var origin = { x: oddState.slingshot.x, y: oddState.slingshot.y - 112 };
+  var origin = { x: oddState.slingshot.x, y: oddState.slingshot.y - (oddState.slingshot.h || 112) };
   var PULL = 110;
   var HOLD = 40;
   var RELEASE = PULL + HOLD;
@@ -215,7 +232,7 @@ function oddDemoStep() {
     oddState.demoPhase++;
   } else if (!oddState.launched) {
     var slX = oddState.slingshot.x;
-    var slY = oddState.slingshot.y - 112;
+    var slY = oddState.slingshot.y - (oddState.slingshot.h || 112);
     bird.vx = (slX - bird.x) * LAUNCH_POWER;
     bird.vy = (slY - bird.y) * LAUNCH_POWER;
     oddState.launched = true;
@@ -248,6 +265,13 @@ function loadOddLevel() {
   var canvas = oddState.canvas;
   if (!canvas || !oddState.ctx) return;
 
+  oddScale = computeOddScale(canvas);
+  oddState.slingshot.x = Math.round(200 * (0.65 + 0.35 * oddScale));
+  oddState.slingshot.y = canvas.height - Math.round(80 * oddScale);
+  oddState.slingshot.h = Math.round(112 * oddScale);
+  MAX_PULL = 120 * oddScale;
+  MIN_PULL = 25 * oddScale;
+
   oddState.launched = false;
   oddState.hitProcessed = false;
   oddState.answered = false;
@@ -261,8 +285,8 @@ function loadOddLevel() {
 
   oddState.bird = {
     x: oddState.slingshot.x,
-    y: oddState.slingshot.y - 112,
-    radius: 24,
+    y: oddState.slingshot.y - (oddState.slingshot.h || 112),
+    radius: Math.round(24 * oddScale),
     vx: 0, vy: 0,
     active: true
   };
@@ -271,18 +295,18 @@ function loadOddLevel() {
   var cw = Math.max(canvas.width, 600);
   var ch = canvas.height;
   var count = q.options.length;
-  var targetX = cw * 0.78;
+  var targetX = cw * (oddScale > 1.15 ? 0.82 : 0.78);
 
-  var radius = 48;
-  var labelGap = 6;
-  var labelBoxH = 30;
+  var radius = Math.round(48 * oddScale);
+  var labelGap = Math.round(6 * oddScale);
+  var labelBoxH = Math.round(30 * oddScale);
   var topY = 15;
   var bottomMargin = 10;
   var minSpacing = 2 * radius + labelGap + labelBoxH;
   var foot = radius + labelGap + labelBoxH;
   var lastLabelBottom = ch - bottomMargin;
   var maxLastCenter = lastLabelBottom - radius - labelGap - labelBoxH;
-  var spacing = Math.min(160, (maxLastCenter - (topY + radius)) / Math.max(count - 1, 1));
+  var spacing = Math.min(160 * oddScale, (maxLastCenter - (topY + radius)) / Math.max(count - 1, 1));
   spacing = Math.max(minSpacing, spacing);
   topY = Math.max(8, maxLastCenter - radius - spacing * Math.max(count - 1, 1));
   if (topY < 8) topY = 8;
@@ -299,8 +323,8 @@ function loadOddLevel() {
       hit: false,
       labelGap: labelGap,
       labelBoxH: labelBoxH,
-      labelFont: 20,
-      emojiFont: 54
+      labelFont: Math.round(20 * oddScale),
+      emojiFont: Math.round(54 * oddScale)
     });
   });
 
@@ -322,7 +346,7 @@ function setupOddEvents() {
     if (!oddState.launched && bird && bird.active) {
       var dx = pos.x - bird.x;
       var dy = pos.y - bird.y;
-      if (Math.sqrt(dx * dx + dy * dy) < 50) {
+      if (Math.sqrt(dx * dx + dy * dy) < 50 * oddScale) {
         oddState.dragging = true;
         oddState.dragStart = { x: bird.x, y: bird.y };
       }
@@ -364,7 +388,7 @@ function setupOddEvents() {
     }
 
     var slX = oddState.slingshot.x;
-    var slY = oddState.slingshot.y - 112;
+    var slY = oddState.slingshot.y - (oddState.slingshot.h || 112);
     var dx = pos.x - slX;
     var dy = pos.y - slY;
     var dist = Math.sqrt(dx * dx + dy * dy);
@@ -401,7 +425,7 @@ function getOddPos(e, rect) {
 function launchBird() {
   var bird = oddState.bird;
   var slX = oddState.slingshot.x;
-  var slY = oddState.slingshot.y - 112;
+  var slY = oddState.slingshot.y - (oddState.slingshot.h || 112);
   var target = oddState.hoveredTarget;
 
   var dx = slX - bird.x;
@@ -477,57 +501,66 @@ function drawBackground(ctx, canvas) {
 
 function drawSlingshot(ctx) {
   var s = oddState.slingshot;
+  var k = oddScale;
+  var h = s.h || 112;
+  var prongY = s.y - h + 6 * k;
 
   ctx.fillStyle = '#5d4037';
   ctx.beginPath();
-  ctx.moveTo(s.x - 14, s.y);
-  ctx.lineTo(s.x + 14, s.y);
-  ctx.lineTo(s.x + 7, s.y - 112);
-  ctx.lineTo(s.x - 7, s.y - 112);
+  ctx.moveTo(s.x - 14 * k, s.y);
+  ctx.lineTo(s.x + 14 * k, s.y);
+  ctx.lineTo(s.x + 7 * k, s.y - h);
+  ctx.lineTo(s.x - 7 * k, s.y - h);
   ctx.closePath();
   ctx.fill();
 
   ctx.fillStyle = '#8d6e63';
   ctx.beginPath();
-  ctx.moveTo(s.x - 5, s.y - 7);
-  ctx.lineTo(s.x + 5, s.y - 7);
-  ctx.lineTo(s.x + 3, s.y - 106);
-  ctx.lineTo(s.x - 3, s.y - 106);
+  ctx.moveTo(s.x - 5 * k, s.y - 7 * k);
+  ctx.lineTo(s.x + 5 * k, s.y - 7 * k);
+  ctx.lineTo(s.x + 3 * k, prongY);
+  ctx.lineTo(s.x - 3 * k, prongY);
   ctx.closePath();
   ctx.fill();
 
   ctx.fillStyle = '#4a3428';
   ctx.beginPath();
-  ctx.arc(s.x - 18, s.y - 106, 11, 0, Math.PI * 2);
+  ctx.arc(s.x - 18 * k, prongY, 11 * k, 0, Math.PI * 2);
   ctx.fill();
   ctx.beginPath();
-  ctx.arc(s.x + 18, s.y - 106, 11, 0, Math.PI * 2);
+  ctx.arc(s.x + 18 * k, prongY, 11 * k, 0, Math.PI * 2);
   ctx.fill();
+}
+
+function oddForkAnchor(sign) {
+  var s = oddState.slingshot;
+  return { x: s.x + sign * 18 * oddScale, y: s.y - (s.h || 112) + 6 * oddScale };
 }
 
 function drawElasticBand(ctx) {
   var bird = oddState.bird;
-  var s = oddState.slingshot;
+  var aL = oddForkAnchor(-1);
+  var aR = oddForkAnchor(1);
 
   ctx.strokeStyle = '#8d6e63';
-  ctx.lineWidth = 5;
+  ctx.lineWidth = 5 * oddScale;
   ctx.beginPath();
-  ctx.moveTo(s.x - 18, s.y - 106);
+  ctx.moveTo(aL.x, aL.y);
   ctx.lineTo(bird.x, bird.y);
   ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(s.x + 18, s.y - 106);
+  ctx.moveTo(aR.x, aR.y);
   ctx.lineTo(bird.x, bird.y);
   ctx.stroke();
 
   ctx.strokeStyle = '#a1887f';
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 2 * oddScale;
   ctx.beginPath();
-  ctx.moveTo(s.x - 18, s.y - 106);
+  ctx.moveTo(aL.x, aL.y);
   ctx.lineTo(bird.x, bird.y);
   ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(s.x + 18, s.y - 106);
+  ctx.moveTo(aR.x, aR.y);
   ctx.lineTo(bird.x, bird.y);
   ctx.stroke();
 }
@@ -574,7 +607,7 @@ function getMarkedTrajectoryPoints(bird, target) {
 function drawTrajectoryArc(ctx) {
   var bird = oddState.bird;
   var slX = oddState.slingshot.x;
-  var slY = oddState.slingshot.y - 112;
+  var slY = oddState.slingshot.y - (oddState.slingshot.h || 112);
 
   var launchVX = (slX - bird.x) * LAUNCH_POWER;
   var launchVY = (slY - bird.y) * LAUNCH_POWER;
@@ -677,12 +710,15 @@ function drawBird(ctx) {
   var bird = oddState.bird;
   if (!bird || !bird.active) return;
 
+  var k = (bird.radius || 24) / 24;
+
   ctx.save();
   ctx.translate(bird.x, bird.y);
+  ctx.scale(k, k);
 
   ctx.fillStyle = '#f1c40f';
   ctx.beginPath();
-  ctx.arc(0, 0, bird.radius, 0, Math.PI * 2);
+  ctx.arc(0, 0, 24, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.strokeStyle = '#d4ac0d';
@@ -768,7 +804,7 @@ function drawTargets(ctx) {
     }
 
     ctx.fillStyle = '#1a1a1a';
-    ctx.font = 'bold ' + t.labelFont + 'px Fredoka, Arial';
+    ctx.font = t.labelFont + 'px Livvic, Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(t.label, 0, t.radius + t.labelGap + t.labelBoxH / 2);
@@ -896,7 +932,7 @@ function resetBird() {
   var bird = oddState.bird;
   if (!bird) return;
   bird.x = oddState.slingshot.x;
-  bird.y = oddState.slingshot.y - 112;
+  bird.y = oddState.slingshot.y - (oddState.slingshot.h || 112);
   bird.vx = 0;
   bird.vy = 0;
   bird.active = true;

@@ -6,7 +6,8 @@
   --coral:#ea5a5a; --coral-dark:#d64545;
   --sky:#56b3e6; --sky-dark:#3a9ad9;
   --ink:#1a1a1a; --ink-dim:#4a4a4a; --ink-dim-2:#777;
-  --panel:rgba(255,255,255,0.8); --panel-solid:#ffffff; --edge:rgba(0,0,0,0.12);
+  --panel:rgba(255,251,240,0.85); --panel-solid:#fffdf7; --edge:rgba(120,90,40,0.16);
+  --cream:#faf3e1; --cream-soft:#fdf8ec; --cream-deep:#f3e8cf;
   --success:#27ae60; --error:#e74c3c;
 }
 *{box-sizing:border-box;}
@@ -20,22 +21,28 @@ html.fonts-loading body{opacity:0;}
 html.fonts-ready body{animation:fontFadeIn .45s ease;}
 @keyframes fontFadeIn{from{opacity:0;}to{opacity:1;}}
 body{
-  min-height:100vh; color:var(--ink); font-family:'Nunito',sans-serif; position:relative;
-  background:
-    radial-gradient(ellipse 800px 600px at 10% 10%, rgba(39,174,96,0.16), transparent 50%),
-    radial-gradient(ellipse 600px 500px at 90% 20%, rgba(227,159,10,0.12), transparent 50%),
-    radial-gradient(ellipse 900px 800px at 50% 110%, rgba(30,158,85,0.14), transparent 50%),
-    linear-gradient(180deg, var(--jungle-deep) 0%, var(--jungle-mid) 50%, var(--jungle-light) 100%);
+  min-height:100vh; color:var(--ink); font-family:'Livvic', sans-serif; font-weight:400; position:relative;
+  background:#faf3e1;
 }
-h1,h2,h3,h4,.display{font-family:'Fredoka',sans-serif;}
+
+/* Typography: body copy stays at 400, headings & titles get more weight */
+h1,h2,h3,h4,.display,
+.cross-title,.cross-wordbank-title,.poem-board-title,.game-title-row h2,
+.game-result-title{
+  font-family:'Livvic', sans-serif;font-weight:600;letter-spacing:0.2px;
+}
+h1,.hero-title,.display{font-weight:700;letter-spacing:0.3px;}
+.gc-body h3,.game-title-row h2,.poem-board-title,.game-result-title,
+.cross-title,.cross-wordbank-title,.odd-hud-overlay .odd-question h3,
+.poem-level-card{font-weight:600;}
 button{font-family:inherit;}
-::selection{background:var(--gold); color:#1a1200;}
+::selection{background:var(--gold); color:var(--ink);}
 
 /* ---------- Background Scene ---------- */
 #bgScene{position:fixed;inset:-4%;z-index:0;background-size:cover;background-position:center;
   opacity:0.5;filter:saturate(1.1) brightness(1);pointer-events:none;}
 #bgScene::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(255,255,255,0.30) 0%,rgba(255,255,255,0.12) 45%,rgba(255,255,255,0.38) 100%);}
+  background:linear-gradient(180deg,rgba(255,255,255,0.14) 0%,rgba(255,255,255,0.05) 45%,rgba(255,255,255,0.18) 100%);}
 
 /* Floating particles */
 .particle{position:fixed;border-radius:50%;pointer-events:none;z-index:1;animation:particleFloat linear infinite;}
@@ -55,7 +62,7 @@ button{font-family:inherit;}
 .screen{display:none;min-height:100vh;}
 .screen.active{display:block;animation:screenIn .4s ease;}
 .screen.active.game-screen{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
-.game-screen .game-wrap{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.game-screen .game-wrap{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;overflow:hidden;}
 #screen-poem.active,#screen-crossword.active,#screen-odd.active{height:100vh;height:100dvh;overflow:hidden;}
 @keyframes screenIn{from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:translateY(0);}}
 
@@ -64,28 +71,23 @@ button{font-family:inherit;}
   position:sticky;top:0;z-index:80;
   display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;
   padding:6px 16px;
-  background:linear-gradient(180deg,rgba(255,255,255,0.95),rgba(240,250,244,0.88));
+  background:#fbf3e2;
   border-bottom:1px solid var(--edge);
-  box-shadow:0 4px 20px rgba(20,56,35,0.14);
 }
-.gp-hud::before{
-  content:"";position:absolute;bottom:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--leaf-glow),transparent);
-}
+.gp-hud::before{display:none;}
 
 /* Left section - Back button */
 .gp-hud .side{display:flex;align-items:center;gap:8px;}
 .gp-back{
   background:linear-gradient(145deg,rgba(240,240,240,0.9),rgba(230,230,230,0.95));
   border:1px solid var(--edge);color:var(--ink);padding:8px 16px;
-  border-radius:12px;cursor:pointer;font-weight:800;font-size:13px;
-  transition:all .2s;font-family:'Fredoka',sans-serif;
+  border-radius:12px;cursor:pointer;font-weight:400;font-size:13px;
+  transition:all .2s;font-family:'Livvic', sans-serif;
   display:flex;align-items:center;gap:6px;
 }
 .gp-back:hover{
-  background:linear-gradient(145deg,rgba(220,220,220,0.95),rgba(210,210,210,1));
-  border-color:var(--ink-dim);color:#000;
-  box-shadow:0 2px 8px rgba(0,0,0,0.12);
+  background:var(--cream-deep);
+  border-color:var(--ink-dim);color:var(--ink);
 }
 .gp-back::before{content:"◀";font-size:10px;}
 
@@ -94,45 +96,40 @@ button{font-family:inherit;}
   display:flex;align-items:center;justify-content:center;gap:12px;
 }
 .gp-chip{
-  background:linear-gradient(145deg,rgba(255,255,255,0.85),rgba(232,245,237,0.95));
+  background:var(--cream-soft);
   border:2px solid var(--edge);border-radius:12px;
-  padding:8px 14px;font-weight:800;font-size:13px;
+  padding:8px 14px;font-weight:400;font-size:13px;
   display:flex;align-items:center;gap:6px;
-  transition:all .2s;
-  position:relative;overflow:hidden;
+  transition:border-color .2s;
+  position:relative;
 }
-.gp-chip::after{
-  content:"";position:absolute;top:0;left:0;right:0;height:50%;
-  background:linear-gradient(180deg,rgba(255,255,255,0.65),transparent);
-  pointer-events:none;
-}
-.gp-chip:hover{border-color:var(--gold);transform:translateY(-1px);}
+.gp-chip::after{display:none;}
+.gp-chip:hover{border-color:var(--gold);}
 
 .gp-chip.score-chip{
-  background:linear-gradient(145deg,rgba(241,196,15,0.2),rgba(212,172,13,0.1));
-  border-color:rgba(241,196,15,0.3);
+  background:rgba(241,196,15,0.16);
+  border-color:rgba(224,168,50,0.4);
 }
 .gp-chip.combo-chip{
-  background:linear-gradient(145deg,rgba(255,107,107,0.2),rgba(238,90,36,0.1));
-  border-color:rgba(255,107,107,0.3);
+  background:rgba(231,76,60,0.12);
+  border-color:rgba(226,120,90,0.4);
 }
 .gp-chip.timer-chip{
-  background:linear-gradient(145deg,rgba(87,199,255,0.18),rgba(41,128,185,0.1));
-  border-color:rgba(87,199,255,0.35);
+  background:rgba(87,199,255,0.14);
+  border-color:rgba(87,163,199,0.4);
   min-width:88px;justify-content:center;
 }
-.gp-chip.timer-chip.low{background:linear-gradient(145deg,rgba(255,107,107,0.25),rgba(238,90,36,0.15));border-color:rgba(255,107,107,0.4);}
+.gp-chip.timer-chip.low{background:rgba(231,76,60,0.18);border-color:rgba(226,120,90,0.5);}
 
 /* Right section - Sound toggle */
 .sound-toggle{
   width:40px;height:40px;border-radius:12px;cursor:pointer;font-size:16px;
-  background:linear-gradient(145deg,rgba(255,255,255,0.85),rgba(232,245,237,0.95));
+  background:var(--cream-soft);
   border:2px solid var(--edge);color:var(--ink);
-  transition:all .2s;display:flex;align-items:center;justify-content:center;
+  transition:border-color .2s;display:flex;align-items:center;justify-content:center;
 }
 .sound-toggle:hover{
-  border-color:var(--gold);color:var(--gold);
-  box-shadow:0 0 12px rgba(241,196,15,0.2);
+  border-color:var(--gold);color:var(--ink);
 }
 
 /* ---------- MAIN MENU ---------- */
@@ -141,25 +138,26 @@ button{font-family:inherit;}
 #screen-menu{padding:0 0 60px;}
 .menu-hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 18px 20px;}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:9px;padding:7px 16px;border:1px solid var(--edge);border-radius:999px;
-  background:var(--panel);backdrop-filter:blur(10px);font-weight:800;letter-spacing:2px;font-size:11px;color:var(--gold);
+  background:var(--panel);backdrop-filter:blur(10px);font-weight:400;letter-spacing:2px;font-size:11px;color:var(--ink);
   text-transform:uppercase;margin-bottom:18px;}
 .pulse-dot{width:6px;height:6px;border-radius:50%;background:var(--leaf-glow);box-shadow:0 0 10px var(--leaf-glow);
   animation:pulseDot 1.6s ease-in-out infinite;}
 @keyframes pulseDot{0%,100%{opacity:.4;transform:scale(.8);}50%{opacity:1;transform:scale(1.3);}}
 
-.hero-icon-wrap{position:relative;width:180px;height:180px;margin-bottom:8px;}
-.hero-icon{width:180px;height:180px;display:flex;align-items:center;justify-content:center;font-size:100px;
-  animation:heroFloat 4s ease-in-out infinite;filter:drop-shadow(0 20px 40px rgba(46,204,113,0.3));}
+.hero-icon-wrap{position:relative;width:460px;max-width:88vw;height:250px;margin-bottom:8px;}
+.hero-icon{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:100px;
+  animation:heroFloat 4s ease-in-out infinite;filter:drop-shadow(0 16px 32px rgba(46,204,113,0.28));}
+.hero-icon img{width:100%;height:100%;object-fit:contain;display:block;}
 @keyframes heroFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
-.hero-ring{position:absolute;inset:-20px;border:3px solid rgba(46,204,113,0.2);border-radius:50%;animation:ringPulse 3s ease-in-out infinite;}
-.hero-ring:nth-child(2){inset:-35px;animation-delay:.5s;}
-.hero-ring:nth-child(3){inset:-50px;animation-delay:1s;}
+/* Rings were a flourish around the round compass icon — hidden now that the
+   hero art is the wide Sense Quest logo. */
+.hero-ring{display:none;}
 @keyframes ringPulse{0%,100%{opacity:.2;transform:scale(1);}50%{opacity:.5;transform:scale(1.05);}}
 
 h1.hero-title{font-size:clamp(34px,7vw,56px);margin:8px 0 6px;line-height:1.05;
   background:linear-gradient(120deg,#1a1a1a,#333 40%,#1a1a1a 80%);
   -webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;}
-p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0 20px;font-weight:800;letter-spacing:.5px;}
+p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink);margin:0 0 20px;font-weight:400;letter-spacing:.5px;}
 
 .player-strip{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:8px;}
 .player-strip .gp-chip{font-size:12.5px;}
@@ -214,42 +212,42 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 }
 
 .gc-body{padding:18px 20px 22px;}
-.gc-body h3{margin:0 0 8px;font-size:28px;color:var(--ink);font-weight:500;letter-spacing:0.5px;}
-.gc-body p{margin:0 0 14px;color:var(--ink-dim);font-size:16px;font-weight:500;line-height:1.4;}
+.gc-body h3{margin:0 0 8px;font-size:28px;color:var(--ink);font-weight:400;letter-spacing:0.5px;}
+.gc-body p{margin:0 0 14px;color:var(--ink);font-size:16px;font-weight:400;line-height:1.4;}
 
 .gc-footer{display:flex;align-items:center;justify-content:space-between;}
 .gc-tag{
-  font-size:12px;font-weight:800;padding:5px 10px;border-radius:8px;
+  font-size:12px;font-weight:400;padding:5px 10px;border-radius:8px;
   text-transform:uppercase;letter-spacing:0.5px;
 }
-.gc-tag.easy{background:rgba(46,204,113,0.2);color:var(--leaf);}
-.gc-tag.medium{background:rgba(241,196,15,0.2);color:var(--gold);}
-.gc-tag.hard{background:rgba(255,107,107,0.2);color:var(--coral);}
+.gc-tag.easy{background:rgba(46,204,113,0.2);color:var(--ink);}
+.gc-tag.medium{background:rgba(241,196,15,0.2);color:var(--ink);}
+.gc-tag.hard{background:rgba(255,107,107,0.2);color:var(--ink);}
 
 .gc-play{
   display:flex;align-items:center;gap:6px;
-  font-family:'Fredoka',sans-serif;font-weight:700;font-size:15px;color:var(--gold);
+  font-family:'Livvic', sans-serif;font-weight:400;font-size:15px;color:var(--ink);
 }
 .gc-play-arrow{
   width:28px;height:28px;border-radius:50%;background:rgba(241,196,15,0.15);
   display:flex;align-items:center;justify-content:center;font-size:12px;
   transition:all .25s;
 }
-.game-card:hover .gc-play-arrow{background:var(--gold);color:#1a1200;}
+.game-card:hover .gc-play-arrow{background:var(--gold);color:var(--ink);}
 
 /* ---------- Shared Game Wrap ---------- */
-.game-wrap{max-width:1200px;margin:0 auto;padding:10px 18px 10px;overflow:hidden;width:100%;}
+.game-wrap{max-width:min(1640px,96vw);margin:0 auto;padding:10px 18px 10px;overflow:hidden;width:100%;}
 .game-title-row{text-align:center;margin-bottom:8px;flex-shrink:0;}
 .game-title-row h2{font-size:clamp(18px,3vw,24px);margin:0 0 2px;}
-.game-title-row p{color:var(--ink-dim);font-size:12px;font-weight:700;margin:0;}
+.game-title-row p{color:var(--ink);font-size:12px;font-weight:400;margin:0;}
 
 /* ---------- Float banners ---------- */
 .float-banner{position:fixed;top:84px;left:50%;transform:translateX(-50%) translateY(-16px);z-index:700;
-  font-family:'Fredoka',sans-serif;font-weight:800;padding:12px 26px;border-radius:999px;opacity:0;pointer-events:none;
+  font-family:'Livvic', sans-serif;font-weight:400;padding:12px 26px;border-radius:999px;opacity:0;pointer-events:none;
   transition:all .3s cubic-bezier(.34,1.56,.64,1);font-size:16px;white-space:nowrap;}
 .float-banner.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.float-banner.combo{background:linear-gradient(135deg,var(--gold),var(--leaf));color:#1a1200;box-shadow:0 12px 30px rgba(46,204,113,.35);}
-.float-banner.achieve{background:linear-gradient(135deg,var(--coral),var(--gold));color:#fff;box-shadow:0 12px 30px rgba(255,107,107,.35);}
+.float-banner.combo{background:#fffaf0;border:2px solid var(--gold);color:var(--ink);box-shadow:0 8px 22px rgba(0,0,0,.16);}
+.float-banner.achieve{background:#fffaf0;border:2px solid var(--coral);color:var(--ink);box-shadow:0 8px 22px rgba(0,0,0,.16);}
 
 /* ---------- SHARED RESULT POPUP ---------- */
 .game-result-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:1000;
@@ -258,16 +256,16 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 .game-result-card{background:linear-gradient(145deg,#fff8f0,#fff);border:1px solid #e8ddd0;border-radius:20px;
   padding:30px 40px;text-align:center;max-width:380px;width:90%;
   box-shadow:0 8px 32px rgba(0,0,0,0.15);transform:scale(0.8);transition:transform 0.4s;
-  font-family:'Fredoka',sans-serif;}
+  font-family:'Livvic', sans-serif;}
 .game-result-overlay.show .game-result-card{transform:scale(1);}
 .game-result-emoji{font-size:52px;margin-bottom:10px;}
-.game-result-title{font-size:24px;font-weight:800;color:var(--gold-dark);margin-bottom:6px;}
-.game-result-score{font-size:16px;color:#5a7a64;margin-bottom:20px;}
+.game-result-title{font-size:24px;font-weight:400;color:var(--ink);margin-bottom:6px;}
+.game-result-score{font-size:16px;color:var(--ink);margin-bottom:20px;}
 .game-result-buttons{display:flex;gap:12px;justify-content:center;}
-.game-result-btn{padding:10px 24px;border:none;border-radius:10px;font-family:'Fredoka',sans-serif;
-  font-size:15px;font-weight:700;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;}
+.game-result-btn{padding:10px 24px;border:none;border-radius:10px;font-family:'Livvic', sans-serif;
+  font-size:15px;font-weight:400;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;}
 .game-result-btn:hover{transform:scale(1.05);}
-.game-result-btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#1a1200;
+.game-result-btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--ink);
   box-shadow:0 4px 15px rgba(241,196,15,0.4);}
 .game-result-btn.secondary{background:rgba(0,0,0,0.04);color:var(--ink);border:1px solid var(--edge);}
 
@@ -285,28 +283,31 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 .poem-hud{position:relative;z-index:10;flex-shrink:0;display:flex;justify-content:space-between;align-items:center;
   gap:10px;flex-wrap:wrap;padding:10px 14px 0 20px;}
 .poem-level-card{background:rgba(255,255,255,0.9);border:1px solid var(--edge);border-radius:8px;padding:8px 16px;
-  color:var(--ink);font-weight:800;letter-spacing:1px;font-size:13px;}
-.poem-score-card{background:var(--gold);color:#1a1200;padding:6px 16px;border-radius:20px;font-weight:800;font-size:14px;}
+  color:var(--ink);font-weight:400;letter-spacing:1px;font-size:13px;}
+.poem-score-card{background:var(--gold);color:var(--ink);padding:6px 16px;border-radius:20px;font-weight:400;font-size:14px;}
 .poem-play{position:relative;flex:1;min-height:0;overflow:hidden;}
 
 .poem-board{position:absolute;left:20px;top:10px;transform:none;width:min(42%,440px);min-width:280px;max-width:440px;
   background:rgba(255,255,255,0.95);border:1px solid var(--edge);border-radius:12px;padding:20px 24px;
   box-shadow:0 4px 16px rgba(0,0,0,0.08);z-index:6;}
-.poem-board-title{color:var(--gold-dark);font-size:20px;font-weight:800;margin-bottom:14px;
+.poem-board-title{color:var(--ink);font-size:20px;font-weight:400;margin-bottom:14px;
   border-bottom:1px solid rgba(227,159,10,0.3);padding-bottom:8px;line-height:1.3;}
 .poem-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:22px;color:var(--ink);
-  margin-bottom:14px;line-height:1.5;font-family:'Fredoka',sans-serif;font-weight:600;}
+  margin-bottom:14px;line-height:1.5;font-family:'Livvic', sans-serif;font-weight:400;}
 .poem-blank-slot{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
   min-width:95px;height:34px;border-bottom:2px solid var(--edge);
-  background:rgba(0,0,0,0.04);color:var(--ink);font-weight:700;text-align:center;
-  border-radius:4px;padding:0 8px;font-family:'Fredoka',sans-serif;vertical-align:middle;font-size:18px;}
+  background:rgba(0,0,0,0.04);color:var(--ink);font-weight:400;text-align:center;
+  border-radius:4px;padding:0 8px;font-family:'Livvic', sans-serif;vertical-align:middle;font-size:18px;}
 .poem-blank-slot.active{border-color:var(--gold);background:rgba(241,196,15,0.2);
   box-shadow:0 0 8px rgba(241,196,15,0.5);animation:poemGlow 1s infinite alternate;}
 @keyframes poemGlow{0%{transform:scale(1);}100%{transform:scale(1.05);}}
 .poem-blank-slot.correct{background:rgba(46,204,113,0.3);border-color:var(--success);}
 @media(max-width:800px){
-  .poem-board{width:90%;max-width:none;top:10px;bottom:auto;max-height:46%;}
-  .poem-asteroid{z-index:5;}
+  .poem-board{width:90%;max-width:none;top:10px;bottom:auto;max-height:40%;}
+  .poem-asteroid{z-index:5;gap:3px;}
+  .poem-ast-img{width:38px;height:38px;}
+  .poem-ast-icon{font-size:32px;}
+  .poem-ast-word{font-size:13px;padding:3px 9px;}
 }
 
 .poem-slingshot{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);width:40px;height:50px;z-index:8;pointer-events:none;}
@@ -327,20 +328,29 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
   pointer-events:none;animation:poemSpin 3s linear infinite;}
 @keyframes poemSpin{100%{transform:translate(-50%,-50%) rotate(360deg);}}
 
-.poem-asteroid{position:absolute;width:auto;min-width:100px;height:48px;padding:0 14px;
-  background:linear-gradient(135deg,rgba(240,240,240,0.95),rgba(230,230,230,1));
-  border:1px solid var(--edge);border-radius:24px;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--ink);font-size:20px;font-weight:700;font-family:'Fredoka',sans-serif;
-  box-shadow:0 2px 8px rgba(0,0,0,0.1);cursor:pointer;z-index:4;
-  transition:transform .1s ease,border-color .2s ease;}
-.poem-asteroid:hover{transform:scale(1.08);border-color:var(--ink-dim);color:#000;}
+.poem-asteroid{position:absolute;width:auto;min-width:0;height:auto;padding:0;
+  background:none;border:none;border-radius:0;box-shadow:none;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;
+  color:var(--ink);font-weight:400;font-family:'Livvic', sans-serif;
+  cursor:pointer;z-index:4;transition:transform .1s ease;}
+.poem-asteroid:hover{transform:scale(1.1);}
+.poem-ast-img{width:52px;height:52px;object-fit:contain;margin:0;flex-shrink:0;
+  filter:drop-shadow(0 3px 6px rgba(0,0,0,0.22));}
+.poem-ast-icon{font-size:44px;line-height:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));}
+.poem-ast-word{font-size:15px;font-weight:600;color:var(--ink);white-space:nowrap;
+  background:linear-gradient(145deg,#fffdf8,var(--cream-deep));
+  border:1px solid var(--edge);border-radius:14px;padding:4px 12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.12);}
+
+/* Large external monitors only — laptop widths (<=1600px) are untouched.
+   The full monitor-scaling block lives at the END of this file so it wins
+   over the later single-class rules in the type-hierarchy section. */
 
 .poem-message{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);
-  background:linear-gradient(145deg,#f5f0ff,#fff);border:1px solid #d8d0e8;
-  color:var(--ink);padding:15px 30px;border-radius:12px;font-size:22px;
-  font-weight:800;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,0.18);
-  display:none;z-index:20;font-family:'Fredoka',sans-serif;}
+  background:linear-gradient(145deg,#fff6e6,#fffdf8);border:2px solid var(--edge);
+  color:var(--ink);padding:16px 32px;border-radius:16px;font-size:20px;
+  font-weight:400;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,0.18);
+  display:none;z-index:20;font-family:'Livvic', sans-serif;}
 
 /* Poem progress */
 .poem-progress{display:flex;justify-content:center;gap:10px;margin-bottom:10px;flex-shrink:0;}
@@ -354,118 +364,137 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
   background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:16px 18px;backdrop-filter:blur(10px);
   overflow:hidden;}
 .cross-header{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;padding-bottom:6px;border-bottom:1px solid var(--edge);}
-.cross-title{font-family:'Fredoka',sans-serif;font-size:15px;color:var(--ink-dim);font-weight:600;}
-.cross-progress{font-family:'Fredoka',sans-serif;font-size:13px;color:var(--gold);font-weight:700;
+.cross-title{font-family:'Livvic', sans-serif;font-size:15px;color:var(--ink);font-weight:400;}
+.cross-progress{font-family:'Livvic', sans-serif;font-size:13px;color:var(--ink);font-weight:400;
   background:rgba(241,196,15,0.1);padding:4px 12px;border-radius:8px;}
-.cross-layout{display:flex;align-items:flex-start;justify-content:center;gap:32px;flex:1;min-height:0;overflow:hidden;padding-top:10px;}
+.cross-layout{display:flex;align-items:stretch;justify-content:center;gap:24px;flex:1;min-height:0;overflow:hidden;padding-top:4px;}
 
-/* Grid area with emoji clues */
-.cross-grid-area{position:relative;flex:0 0 auto;padding:60px 72px 12px 72px;}
-.cross-grid{display:grid;grid-template-columns:repeat(9,64px);grid-template-rows:repeat(7,64px);gap:2px;}
+/* Grid area with emoji clues — fully fluid: sizes itself to whatever room is
+   available instead of jumping between fixed breakpoint pixel sizes, so the
+   grid never overflows its container and clue icons never get clipped. */
+.cross-grid-area{
+  position:relative;
+  flex:1 1 auto;
+  min-width:0;
+  min-height:0;
+  width:100%;
+  max-width:min(780px,66vw);
+  height:100%;
+  max-height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  /* Reserve room around the grid for the clue pictures: enough headroom on
+     top for the "above" clues (nose / tongue / eyes) and modest side room
+     for the left/right clues, while keeping cells large on short or
+     display-scaled laptops. (Monitors override this below.) */
+  padding:clamp(52px,8vh,66px) clamp(24px,3vw,42px) clamp(6px,1vh,10px);
+  box-sizing:border-box;
+}
+.cross-grid{
+  position:relative;
+  display:grid;
+  grid-template-columns:repeat(9,1fr);
+  grid-template-rows:repeat(7,1fr);
+  gap:2px;
+  width:100%;
+  height:auto;
+  aspect-ratio:9/7;
+  /* Cap cell size so cells/clue pictures don't grow oversized on large
+     laptop windows (monitors raise this cap in their own block below). */
+  max-width:600px;
+  max-height:100%;
+  margin:0 auto;
+}
+@supports not (aspect-ratio:9/7){
+  .cross-grid{height:calc(100% - 0px);}
+}
 
 /* Cells */
 .cross-cell{
-  width:64px;height:64px;border-radius:2px;
+  width:100%;height:100%;border-radius:4px;
   display:flex;align-items:center;justify-content:center;
-  font-family:'Fredoka',sans-serif;font-weight:700;font-size:34px;
-  background:#fff;color:#1a1a1a;border:1px solid var(--edge);
-  transition:all .2s;cursor:pointer;position:relative;
+  font-family:'Livvic', sans-serif;font-weight:400;
+  font-size:var(--cross-cell-font,28px);
+  background:#fff;color:#1a1a1a;border:1.5px solid var(--edge);
+  transition:background .2s ease,border-color .2s ease,transform .1s ease;
+  cursor:pointer;position:relative;
   box-shadow:0 1px 3px rgba(0,0,0,0.06);
 }
 .cross-cell.locked{background:transparent;border:none;box-shadow:none;cursor:default;}
 .cross-cell.start{background:#f5f7ff;border-color:#c0d0e8;}
 .cross-cell.filled{background:#f0f7f2;border-color:#b0c8b8;color:#1a1a1a;}
-.cross-cell:active{transform:scale(0.95);}
+.cross-cell:hover:not(.locked):not(.filled){border-color:var(--gold);}
+.cross-cell:active{transform:scale(0.93);}
 
-/* Cell number (top-left corner) */
-.cell-num{position:absolute;top:2px;left:4px;font-size:11px;font-weight:700;color:#555;line-height:1;}
-.cell-letter{font-size:34px;font-weight:700;text-transform:uppercase;}
-.cross-cell.has-num .cell-letter{margin-top:8px;margin-left:11px;}
+/* Cell number (top-left corner) — sized off the cell's own font-size so it
+   always scales in step with the cell instead of a separate breakpoint list. */
+.cell-num{position:absolute;top:6%;left:9%;font-size:var(--cross-num-font,11px);font-weight:400;color:var(--ink);line-height:1;letter-spacing:-0.02em;}
+.cell-letter{font-size:var(--cross-cell-font,28px);font-weight:400;text-transform:uppercase;line-height:1;}
 
-/* Emoji clues positioned around the grid */
+/* Emoji clues positioned around the grid (placed precisely in JS from the
+   actual rendered cell positions, so they always line up with the grid
+   regardless of viewport size). */
 .cross-clue-emoji{
-  position:absolute;z-index:5;display:flex;flex-direction:column;align-items:center;gap:2px;
-  pointer-events:none;
+  position:absolute;top:0;left:0;z-index:5;display:flex;flex-direction:column;align-items:center;gap:2px;
+  pointer-events:none;will-change:top,left;
 }
 .cross-clue-num{
-  font-family:'Fredoka',sans-serif;font-size:11px;font-weight:700;
+  font-family:'Livvic', sans-serif;font-size:11px;font-weight:400;
   background:var(--leaf);color:#fff;width:20px;height:20px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.3);
+  flex-shrink:0;
 }
-.cross-clue-icon{font-size:48px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));}
-.cross-clue-icon img{display:block;width:48px;height:48px;object-fit:contain;}
+.cross-clue-icon{
+  font-size:var(--cross-clue-font,22px);filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+  width:var(--cross-clue-size,44px);height:var(--cross-clue-size,44px);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.cross-clue-icon img{display:block;width:100%;height:100%;object-fit:contain;}
 .cross-clue-emoji.done .cross-clue-num{background:#888;}
+.cross-clue-emoji.done .cross-clue-icon{opacity:0.55;}
 .cross-clue-check{position:absolute;right:-8px;bottom:-5px;width:22px;height:22px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;background:var(--success);color:#063b1d;
-  border:2px solid #fff;font:bold 15px 'Fredoka',sans-serif;}
+  display:flex;align-items:center;justify-content:center;background:var(--success);color:var(--ink);
+  border:2px solid #fff;font:400 15px 'Livvic',sans-serif;}
 
 .cross-letter-popout{position:absolute;z-index:100;display:flex;gap:6px;
   padding:6px;background:#ffffff;border:1px solid var(--edge);border-radius:10px;
   transform:translate(-50%,-50%);box-shadow:0 4px 12px rgba(0,0,0,0.18);}
-.cross-letter-popout button{width:48px;height:48px;padding:0;border:0;border-radius:7px;
-  background:#fff;color:#1a1a1a;font:700 29px 'Fredoka',sans-serif;cursor:pointer;}
-.cross-letter-popout button:hover{background:var(--gold);color:#1a1200;}
+.cross-letter-popout button{width:44px;height:44px;padding:0;border:0;border-radius:7px;
+  background:#fff;color:#1a1a1a;font:400 26px 'Livvic',sans-serif;cursor:pointer;}
+.cross-letter-popout button:hover{background:var(--gold);color:var(--ink);}
 
-/* Word bank sidebar */
-.cross-wordbank{flex:0 0 220px;display:flex;flex-direction:column;gap:10px;padding-top:8px;
-  max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+/* Word bank sidebar — a definite height (from align-items:stretch on
+   .cross-layout) so it either fits without scrolling or scrolls cleanly
+   inside its own box, never by pushing the whole page. */
+.cross-wordbank{flex:0 0 200px;display:flex;flex-direction:column;gap:8px;padding-top:4px;
+  height:100%;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .cross-wordbank::-webkit-scrollbar{display:none;}
-.cross-wordbank-title{font-family:'Fredoka',sans-serif;font-size:20px;color:var(--gold);font-weight:700;margin-bottom:5px;}
-.cross-word-row{display:flex;align-items:center;gap:10px;padding:12px 14px;
-  background:rgba(0,0,0,0.03);border-radius:12px;border-left:3px solid var(--edge);font-size:22px;}
+.cross-wordbank-title{font-family:'Livvic', sans-serif;font-size:17px;color:var(--ink);font-weight:400;margin-bottom:2px;flex-shrink:0;}
+.cross-word-row{display:flex;align-items:center;gap:10px;padding:8px 12px;flex-shrink:0;
+  background:rgba(0,0,0,0.03);border-radius:12px;border-left:3px solid var(--edge);font-size:20px;}
 .cross-word-row.done{border-left-color:#aaa;opacity:0.6;}
-.cross-word-emoji{font-size:40px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.cross-word-emoji img{display:block;width:48px;height:48px;object-fit:contain;}
-.cross-word-label{color:var(--ink-dim);font-weight:700;white-space:nowrap;font-size:19px;}
-.cross-word-letters{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--ink);letter-spacing:2px;font-size:20px;}
-.cross-word-check{margin-left:auto;color:var(--ink);font:bold 22px 'Fredoka',sans-serif;}
+.cross-word-emoji{font-size:32px;width:46px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cross-word-emoji img{display:block;width:100%;height:100%;object-fit:contain;}
+.cross-word-label{color:var(--ink);font-weight:400;white-space:nowrap;font-size:17px;}
+.cross-word-letters{font-family:'Livvic', sans-serif;font-weight:400;color:var(--ink);letter-spacing:2px;font-size:18px;}
+.cross-word-check{margin-left:auto;color:var(--ink);font:400 20px 'Livvic',sans-serif;}
 .revealed-letter{color:var(--ink);text-transform:uppercase;}
-.hidden-letter{color:var(--ink-dim);opacity:0.4;}
-.float-banner.correct{background:linear-gradient(135deg,#2ecc71,#a8f0bd);color:#063b1d;}
-.float-banner.wrong{background:linear-gradient(135deg,#ff6b6b,#ffc0c0);color:#5a1010;}
+.hidden-letter{color:var(--ink);opacity:0.4;}
+.float-banner.correct{background:linear-gradient(135deg,#2ecc71,#a8f0bd);color:var(--ink);}
+.float-banner.wrong{background:linear-gradient(135deg,#ff6b6b,#ffc0c0);color:var(--ink);}
 .float-banner.correct,.float-banner.wrong{top:50%;font-size:22px;padding:18px 34px;}
 .float-banner.correct.show,.float-banner.wrong.show{transform:translate(-50%,-50%);}
 
 .crossword-actions{flex-shrink:0;text-align:center;padding-top:4px;}
 @media(max-width:720px){
-  .cross-layout{flex-direction:column;align-items:center;overflow:hidden;}
-  .cross-grid-area{padding:50px 44px 12px 44px;}
-  .cross-grid{grid-template-columns:repeat(9,42px);grid-template-rows:repeat(7,42px);gap:2px;}
-  .cross-cell{width:42px;height:42px;font-size:23px;}
-  .cell-letter{font-size:23px;}
-  .cross-cell.has-num .cell-letter{margin-top:5px;margin-left:6px;}
-  .cell-num{font-size:9px;}
-  .cross-wordbank{flex:0 0 auto;width:100%;gap:7px;}
+  .cross-layout{flex-direction:column;align-items:stretch;overflow:hidden;gap:12px;}
+  .cross-grid-area{flex:0 0 auto;width:100%;max-width:100%;max-height:58%;padding:clamp(28px,11vw,44px) clamp(24px,9vw,44px) 10px;}
+  .cross-wordbank{flex:1 1 auto;width:100%;height:auto;gap:7px;max-height:none;}
   .cross-word-row{padding:7px 10px;}
-  .cross-word-emoji{width:40px;height:40px;font-size:30px;}
-  .cross-word-emoji img{width:40px;height:40px;}
-  .cross-word-label{font-size:17px;}
-}
-@media(min-width:721px) and (max-width:1100px){
-  .cross-grid-area{padding-left:52px;padding-right:52px;}
-  .cross-grid{grid-template-columns:repeat(9,52px);grid-template-rows:repeat(7,52px);}
-  .cross-cell{width:52px;height:52px;font-size:27px;}
-  .cell-letter{font-size:27px;}
-  .cross-cell.has-num .cell-letter{margin-top:6px;margin-left:8px;}
-  .cell-num{font-size:10px;}
-  .cross-wordbank{flex:0 0 200px;}
-}
-@media(min-width:721px) and (max-height:820px){
-  .cross-grid-area{padding-top:54px;padding-left:60px;padding-right:60px;}
-  .cross-grid{grid-template-columns:repeat(9,48px);grid-template-rows:repeat(7,48px);}
-  .cross-cell{width:48px;height:48px;font-size:25px;}
-  .cell-letter{font-size:25px;}
-  .cross-cell.has-num .cell-letter{margin-top:6px;margin-left:7px;}
-  .cell-num{font-size:10px;}
-  .cross-wordbank{gap:8px;}
-  .cross-word-row{padding:8px 11px;}
-  .cross-word-emoji{width:40px;height:40px;font-size:30px;}
-  .cross-word-emoji img{width:40px;height:40px;}
-  .cross-word-label{font-size:17px;}
-  .cross-wordbank-title{font-size:18px;}
-}
-@media(max-height:760px){
-  .cross-layout{transform:none;margin-bottom:0;}
+  .cross-word-emoji{width:36px;height:36px;font-size:26px;}
+  .cross-word-emoji img{width:36px;height:36px;}
+  .cross-word-label{font-size:15px;}
 }
 
 /* ---------- GAME 3: ODD ONE OUT - ANGRY GAMING STYLE ---------- */
@@ -482,9 +511,9 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 
 .odd-skip{margin-top:16px;text-align:center;position:relative;z-index:1;}
 .odd-skip button{
-  background:none;border:1px solid var(--edge);color:var(--ink-dim);
-  font-weight:800;cursor:pointer;font-size:13px;padding:8px 16px;
-  border-radius:8px;transition:all .2s;font-family:'Fredoka',sans-serif;
+  background:none;border:1px solid var(--edge);color:var(--ink);
+  font-weight:400;cursor:pointer;font-size:13px;padding:8px 16px;
+  border-radius:8px;transition:all .2s;font-family:'Livvic', sans-serif;
 }
 .odd-skip button:hover{border-color:var(--ink-dim);color:var(--ink);background:rgba(0,0,0,0.03);}
 
@@ -498,19 +527,19 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
   border:1px solid var(--edge);border-radius:10px;padding:8px 14px;
   max-width:400px;backdrop-filter:blur(8px);
 }
-.odd-hud-overlay .odd-question h3{margin:0;font-size:14px;color:var(--ink);text-transform:uppercase;letter-spacing:1px;}
+.odd-hud-overlay .odd-question h3{margin:0;font-size:14px;color:var(--ink);letter-spacing:.3px;}
 .odd-instruction{
   position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
   background:rgba(255,255,255,0.93);border:1px solid var(--edge);
   border-radius:8px;padding:6px 14px;
-  color:var(--ink-dim);font-weight:700;font-size:12px;
+  color:var(--ink);font-weight:400;font-size:12px;
   pointer-events:none;z-index:10;white-space:nowrap;
 }
 .odd-result-popup{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.7);
   background:linear-gradient(145deg,#f0f4ff,#fff);border:1px solid #d0d8f0;
   border-radius:16px;padding:16px 32px;
-  color:var(--ink);font-size:20px;font-weight:800;font-family:'Fredoka',sans-serif;
+  color:var(--ink);font-size:20px;font-weight:400;font-family:'Livvic', sans-serif;
   text-align:center;z-index:20;opacity:0;pointer-events:none;
   transition:opacity 0.3s,transform 0.3s;
   box-shadow:0 8px 28px rgba(0,0,0,0.18);
@@ -519,23 +548,251 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
   opacity:1;transform:translate(-50%,-50%) scale(1);
 }
 .odd-result-popup.correct{
-  border-color:var(--leaf);color:var(--leaf);
+  border-color:var(--leaf);color:var(--ink);
   box-shadow:0 0 30px rgba(46,204,113,0.4);
 }
 .odd-result-popup.wrong{
-  border-color:var(--coral);color:var(--coral);
+  border-color:var(--coral);color:var(--ink);
   box-shadow:0 0 30px rgba(255,107,107,0.4);
 }
 
 /* ---------- Shared Buttons ---------- */
-.btn{border:none;cursor:pointer;font-family:'Fredoka',sans-serif;font-weight:700;font-size:15px;padding:14px 24px;border-radius:999px;
+.btn{border:none;cursor:pointer;font-family:'Livvic', sans-serif;font-weight:400;font-size:15px;padding:14px 24px;border-radius:999px;
   transition:transform .14s ease,box-shadow .14s ease;}
 .btn:active{transform:translateY(1px) scale(.98);}
-.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-glow));color:#1a1200;box-shadow:0 10px 26px rgba(241,196,15,0.3);}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-glow));color:var(--ink);box-shadow:0 10px 26px rgba(241,196,15,0.3);}
 .btn-primary:hover{transform:translateY(-2px);}
-.btn-ghost{background:rgba(20,86,50,0.06);color:var(--ink-dim);border:2px solid var(--edge);}
+.btn-ghost{background:rgba(20,86,50,0.06);color:var(--ink);border:2px solid var(--edge);}
 .btn-ghost:hover{border-color:var(--gold);color:var(--ink);}
-.btn-leaf{background:linear-gradient(135deg,var(--leaf),var(--leaf-glow));color:#0a1a0f;box-shadow:0 10px 26px rgba(46,204,113,0.28);}
+.btn-leaf{background:linear-gradient(135deg,var(--leaf),var(--leaf-glow));color:var(--ink);box-shadow:0 10px 26px rgba(46,204,113,0.28);}
 
 button:focus-visible,.game-card:focus-visible{outline:3px solid var(--leaf);outline-offset:3px;}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;}}
+
+/* ============================================================
+   TYPE HIERARCHY — clear, distinct roles
+   title  →  heading  →  question  →  body  →  meta
+   (sizes are deliberate, not a blanket enlargement)
+   ============================================================ */
+
+/* — TITLE: hero / page title — big, tight, heaviest */
+h1.hero-title{font-size:clamp(40px,7.5vw,62px);line-height:1.04;font-weight:700;letter-spacing:.3px;margin:8px 0 6px;}
+.hero-eyebrow{font-size:12.5px;letter-spacing:2.4px;font-weight:700;color:var(--ink);}
+
+/* — HEADING: card titles & in-game section titles — 600, medium */
+.gc-body h3{font-size:clamp(20px,2.1vw,24px);font-weight:600;letter-spacing:.2px;margin:0 0 6px;}
+.game-title-row h2{font-size:clamp(19px,2.4vw,23px);font-weight:600;}
+.poem-board-title{font-size:clamp(18px,2vw,21px);font-weight:400;margin-bottom:14px;}
+.cross-wordbank-title{font-size:16px;font-weight:600;}
+.game-result-title{font-size:23px;font-weight:600;}
+
+/* — QUESTION: instructional prompts — calm, regular weight (not bold) */
+.cross-title,
+#poemInstruction,
+.odd-hud-overlay .odd-question h3,
+.odd-instruction{
+  color:var(--ink);font-weight:400;letter-spacing:.2px;
+}
+.cross-title{font-size:13.5px;}
+#poemInstruction{font-size:13px;background:var(--cream-deep);border-color:var(--edge);color:var(--ink);}
+.odd-hud-overlay .odd-question h3{font-size:15px;}
+.odd-instruction{font-size:12.5px;}
+
+/* — BODY: descriptions & poem lines — 400, calm, roomy */
+.hero-subtitle{font-size:clamp(14px,1.9vw,17px);font-weight:400;color:var(--ink-dim);letter-spacing:.3px;}
+.gc-body p{font-size:15.5px;font-weight:400;line-height:1.55;color:var(--ink-dim);margin:0 0 14px;}
+.game-title-row p{font-size:13px;font-weight:400;color:var(--ink-dim-2);}
+.poem-line{font-size:clamp(17px,2vw,21px);font-weight:400;line-height:1.5;}
+
+/* — META: tags, counters, timers — small, quiet, 500 */
+.gc-tag{font-size:11.5px;font-weight:600;padding:5px 11px;}
+.gc-play{font-size:14px;font-weight:600;}
+.cross-progress,.poem-level-card,.poem-score-card{font-size:12px;font-weight:600;}
+
+/* Imagery — bigger, crisper card art; lighter backdrop so it pops */
+.gc-visual{height:172px;}
+.gc-visual .gc-img{height:138px;max-width:92%;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.18));}
+#bgScene{opacity:0.32;}
+
+/* Crossword clue pictures — flat, no shadow, never clipped */
+.cross-clue-icon,
+.cross-clue-icon img{filter:none;}
+.cross-clue-emoji{gap:3px;}
+.crossword-stage,
+.cross-layout,
+.cross-grid-area{overflow:visible;}
+.cross-layout{gap:26px;}
+@media(max-width:720px){.cross-layout{gap:12px;}}
+
+/* Poem Blaster — free-standing picture with the word on a small pill below it */
+.poem-asteroid{
+  flex-direction:column;gap:6px;min-width:0;width:auto;height:auto;
+  padding:0;background:none;border:none;box-shadow:none;
+  line-height:1;font-weight:400;text-align:center;
+}
+.poem-asteroid > *{pointer-events:none;}
+
+/* Poem Blaster — visible launcher (replaces the thin twig) */
+.poem-slingshot{width:66px;height:56px;bottom:6px;}
+.poem-slingshot-base{
+  width:66px;height:26px;margin:28px auto 0;border-radius:16px 16px 10px 10px;
+  background:linear-gradient(180deg,#6ea8ff,#3a72d8);
+  box-shadow:0 5px 14px rgba(58,114,216,.45), inset 0 2px 0 rgba(255,255,255,.4);
+}
+.poem-slingshot-base::before{
+  content:"";position:absolute;left:50%;bottom:100%;transform:translateX(-50%);
+  width:22px;height:26px;border-radius:7px 7px 3px 3px;
+  background:linear-gradient(180deg,#9dc2ff,#5b90ec);box-shadow:inset 0 2px 0 rgba(255,255,255,.4);
+}
+.poem-slingshot-base::after{
+  content:"";position:absolute;left:50%;bottom:calc(100% + 22px);transform:translateX(-50%);
+  width:7px;height:12px;border-radius:3px;background:#2f63c6;
+}
+.poem-slingshot-fork-l,.poem-slingshot-fork-r{display:none;}
+
+/* ============================================================
+   CREAM THEME — HUD, cards and game containers matched to the
+   cream page background instead of the old white / green tints
+   ============================================================ */
+.gp-hud{
+  background:#fbf3e2;
+  border-bottom-color:var(--edge);
+}
+.hero-eyebrow{background:var(--cream-soft);border-color:var(--edge);}
+.gp-back,.sound-toggle{
+  background:var(--cream-soft);
+  border-color:var(--edge);
+}
+
+/* Menu game cards */
+.game-card{
+  background:linear-gradient(160deg,#fffdf8,var(--cream-deep));
+  border-color:var(--edge);
+}
+.gc-visual{background:rgba(196,158,92,0.10);}
+.gc-tag.easy{background:rgba(120,170,90,0.20);}
+.gc-tag.medium{background:rgba(224,168,50,0.22);}
+.gc-tag.hard{background:rgba(226,120,90,0.20);}
+
+/* In-game containers */
+.crossword-stage{background:linear-gradient(160deg,#fffdf8,var(--cream-soft));border-color:var(--edge);}
+
+/* Crossword grid cells — crisp white boxes with a clear outline (reference look) */
+.cross-cell{
+  background:#ffffff;
+  border:2px solid #aeb8c6;
+  border-radius:7px;
+  box-shadow:0 2px 5px rgba(30,45,70,0.12);
+  color:#1b2432;
+}
+.cross-cell.locked{background:transparent;border:none;box-shadow:none;}
+.cross-cell.start{background:#eef3ff;border-color:#8fabdd;}
+.cross-cell.filled{background:#e7f7ec;border-color:#74c493;color:#1b2432;}
+.cross-cell:hover:not(.locked):not(.filled){border-color:var(--gold);}
+.cell-num{color:#5b6675;}
+.cross-word-row{background:rgba(196,158,92,0.10);border-left-color:var(--edge);}
+.cross-progress{background:rgba(224,168,50,0.16);}
+.poem-container{background:radial-gradient(circle at 50% 30%,#fffdf8 0%,var(--cream-soft) 100%);border-color:var(--edge);}
+.poem-board{background:var(--cream-soft);border-color:var(--edge);}
+.poem-level-card{background:var(--cream-deep);border-color:var(--edge);}
+.poem-asteroid{background:none;border:none;}
+.poem-ast-word{background:linear-gradient(145deg,#fffdf8,var(--cream-deep));border-color:var(--edge);}
+.odd-stage{background:rgba(255,252,244,0.82);border-color:var(--edge);}
+.odd-hud-overlay .odd-question,.odd-instruction{background:rgba(255,252,244,0.94);border-color:var(--edge);}
+
+/* ============================================================
+   FEEDBACK POPUPS — vivid, consistent correct / wrong colouring
+   across crossword, poem and odd-one-out
+   ============================================================ */
+.float-banner.correct{
+  background:#2e9e5b;
+  border:2px solid #1f7d46;color:#ffffff;
+  box-shadow:0 8px 22px rgba(0,0,0,0.16);
+}
+.float-banner.wrong{
+  background:#d8493c;
+  border:2px solid #b23a2f;color:#ffffff;
+  box-shadow:0 8px 22px rgba(0,0,0,0.16);
+}
+.poem-message{
+  background:#fffaf0;
+  border:2px solid var(--gold);color:var(--ink);
+  box-shadow:0 8px 22px rgba(0,0,0,0.16);
+}
+.odd-result-popup{
+  background:#fffaf0;
+  border:2px solid var(--edge);
+  box-shadow:0 8px 22px rgba(0,0,0,0.16);
+}
+.odd-result-popup.correct{
+  background:#2e9e5b;
+  border-color:#1f7d46;color:#ffffff;
+  box-shadow:0 8px 22px rgba(0,0,0,0.16);
+}
+.odd-result-popup.wrong{
+  background:#d8493c;
+  border-color:#b23a2f;color:#ffffff;
+  box-shadow:0 8px 22px rgba(0,0,0,0.16);
+}
+.game-result-card{
+  background:#fffaf0;
+  border:2px solid #e0cfa6;
+  box-shadow:0 10px 30px rgba(0,0,0,0.18);
+}
+.game-result-btn.primary{
+  background:#e39f0a;color:#ffffff;
+  box-shadow:none;
+}
+.game-result-btn.secondary{
+  background:var(--cream-deep);border:1px solid var(--edge);color:var(--ink);
+}
+
+/* ============================================================
+   LARGE EXTERNAL MONITORS ONLY (min-width:1601px)
+   Laptop widths (<=1600px) are completely untouched by everything
+   below. Bigger HUD, bigger crossword grid + clue art, modestly
+   scaled question headings and options, and the game content
+   vertically centred instead of hugging the top.
+   ============================================================ */
+@media(min-width:1601px){
+  /* --- HUD / header: larger so every item reads clearly --- */
+  .gp-hud{padding:12px 30px;gap:20px;}
+  .gp-back{font-size:20px;padding:12px 24px;border-radius:14px;}
+  .gp-back::before{font-size:13px;}
+  .gp-chip{font-size:20px;padding:12px 20px;border-radius:14px;border-width:2px;}
+  .gp-chip.timer-chip{min-width:130px;}
+  .sound-toggle{width:56px;height:56px;font-size:24px;border-radius:14px;}
+
+  /* --- Question headings: scaled up modestly (not oversized) --- */
+  .cross-header{gap:12px;align-items:center;}
+  .cross-title{font-size:26px;line-height:1.3;}
+  .cross-progress{font-size:18px;padding:7px 16px;}
+  #poemInstruction{font-size:24px;}
+  .odd-hud-overlay .odd-question{max-width:none;}
+  .odd-hud-overlay .odd-question h3{font-size:24px;}
+
+  /* --- Crossword: bigger grid + clue pictures, layout centred --- */
+  .cross-layout{gap:60px;align-items:center;}
+  .cross-grid-area{
+    max-width:min(1060px,52vw);
+    padding:clamp(80px,13vh,120px) clamp(96px,10vw,150px) clamp(16px,2vh,22px);
+  }
+  .cross-grid{max-width:920px;}
+
+  /* --- Crossword word list: modestly scaled options, list vertically centred --- */
+  .cross-wordbank{flex:0 0 300px;justify-content:center;padding-top:0;}
+  .cross-wordbank-title{font-size:24px;margin-bottom:10px;}
+  .cross-word-row{padding:12px 16px;gap:14px;}
+  .cross-word-emoji{width:56px;height:50px;font-size:38px;}
+  .cross-word-label{font-size:22px;}
+  .cross-word-letters{font-size:20px;}
+  .cross-word-check{font-size:22px;}
+  .cross-letter-popout button{width:52px;height:52px;font-size:28px;}
+
+  /* --- Poem Blaster: bigger art, modestly scaled word options --- */
+  .poem-ast-img{width:88px;height:88px;}
+  .poem-ast-icon{font-size:72px;}
+  .poem-ast-word{font-size:22px;padding:6px 16px;}
+  .poem-board-title{font-size:24px;}
+  .poem-line{font-size:24px;}
+}

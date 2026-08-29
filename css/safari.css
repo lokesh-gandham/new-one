@@ -378,7 +378,7 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink-dim);margin:0 0
 .cross-cell:active{transform:scale(0.95);}
 
 /* Cell number (top-left corner) */
-.cell-num{position:absolute;top:2px;left:4px;font-size:11px;font-weight:700;color:#999;line-height:1;}
+.cell-num{position:absolute;top:2px;left:4px;font-size:11px;font-weight:700;color:#555;line-height:1;}
 .cell-letter{font-size:34px;font-weight:700;text-transform:uppercase;}
 .cross-cell.has-num .cell-letter{margin-top:8px;margin-left:11px;}
 

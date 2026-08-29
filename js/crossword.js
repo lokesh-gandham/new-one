@@ -4,9 +4,9 @@ var crosswordWords = [
   { number: 1, word: 'NOSE', clue: 'Organ to smell', row: 0, col: 5, dir: 'down', emoji: '👃', image: '../assets/body-parts%20(2).png', label: 'Nose', cluePos: 'top' },
   { number: 2, word: 'TONGUE', clue: 'Organ to taste', row: 1, col: 7, dir: 'down', emoji: '👅', image: '../assets/tongue.png', label: 'Tongue', cluePos: 'top' },
   { number: 3, word: 'MOUTH', clue: 'Organ to taste & speak', row: 1, col: 4, dir: 'across', emoji: '👄', image: '../assets/mouth1-removebg-preview.png', label: 'Mouth', cluePos: 'right' },
-  { number: 4, word: 'EYES', clue: 'Organs to see', row: 2, col: 2, dir: 'down', emoji: '👁️', image: '../assets/body-parts%20(3).png', label: 'Eyes', cluePos: 'top' },
-  { number: 5, word: 'EARS', clue: 'Organs to hear', row: 2, col: 2, dir: 'across', emoji: '👂', image: '../assets/ear.png', label: 'Ears', cluePos: 'left', clueOffsetY: 20 },
-  { number: 6, word: 'TEETH', clue: 'Organs to chew', row: 4, col: 0, dir: 'across', emoji: '🦷', label: 'Teeth', cluePos: 'left', clueOffsetY: 24, clueOffsetX: -20 }
+  { number: 4, word: 'EYES', clue: 'Organs to see', row: 2, col: 2, dir: 'down', emoji: '👁️', image: '../assets/body-parts%20(3).png', label: 'Eyes', cluePos: 'top', clueOffsetY: 14 },
+  { number: 5, word: 'EARS', clue: 'Organs to hear', row: 2, col: 2, dir: 'across', emoji: '👂', image: '../assets/ear.png', label: 'Ears', cluePos: 'left', clueOffsetY: 50 },
+  { number: 6, word: 'TEETH', clue: 'Organs to chew', row: 4, col: 0, dir: 'across', emoji: '🦷', label: 'Teeth', cluePos: 'left', clueOffsetY: 40, clueOffsetX: -20 }
 ];
 
 var CROSS_ROWS = 7;

@@ -2,7 +2,7 @@
 var oddQuestions = [
   { question: 'Which one CANNOT smell?', options: [
     { emoji: '🌸', label: 'Flower', img: '../assets/flower-removebg-preview.png' },
-    { emoji: '✏️', label: 'Pencil', img: '../assets/pencil-removebg-preview.png' },
+    { emoji: '🪈', label: 'Flute', img: '../assets/flute-removebg-preview.png' },
     { emoji: '🍲', label: 'Soup', img: '../assets/soup-removebg-preview.png' }
   ], correctIdx: 1 },
   { question: 'Which one CANNOT taste?', options: [
@@ -12,7 +12,7 @@ var oddQuestions = [
   ], correctIdx: 2 },
   { question: 'Which one CANNOT hear?', options: [
     { emoji: '🍎', label: 'Apple', img: '../assets/apple-removebg-preview.png' },
-    { emoji: '📢', label: 'Megaphone', img: '../assets/speaker-removebg-preview.png' },
+    { emoji: '📢', label: 'Megaphone', img: '../assets/megaphone-removebg-preview.png' },
     { emoji: '🔔', label: 'Bell', img: '../assets/bell-removebg-preview.png' }
   ], correctIdx: 0 }
 ];
@@ -747,13 +747,18 @@ function drawTargets(ctx) {
     var imgSrc = t.img || null;
     var loadedImg = imgSrc ? loadedImages[imgSrc] : null;
     if (loadedImg && loadedImg.complete && loadedImg.naturalWidth > 0) {
-      var maxDim = t.radius * 1.6;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, 0, t.radius - 1, 0, Math.PI * 2);
+      ctx.clip();
+      var maxDim = t.radius * 2.0;
       var iw = loadedImg.naturalWidth;
       var ih = loadedImg.naturalHeight;
       var scale = Math.min(maxDim / iw, maxDim / ih);
       var drawW = iw * scale;
       var drawH = ih * scale;
       ctx.drawImage(loadedImg, -drawW / 2, -drawH / 2 - 2, drawW, drawH);
+      ctx.restore();
     } else {
       ctx.font = t.emojiFont + 'px serif';
       ctx.textAlign = 'center';

@@ -202,7 +202,9 @@ function shootPoemAsteroid(asteroidEl, word) {
       slot.classList.add('correct');
       poemState.filled[poemState.currentSlot] = word;
       
-      asteroidEl.style.display = 'none';
+      asteroidEl.style.border = '3px solid #2e7d32';
+      asteroidEl.style.boxShadow = '0 0 12px #2e7d32';
+      setTimeout(() => { asteroidEl.style.display = 'none'; }, 300);
       addScore(100);
       playSound('correct');
       speak('Correct!');
@@ -219,6 +221,12 @@ function shootPoemAsteroid(asteroidEl, word) {
         setTimeout(() => checkPoemLevelComplete(poemState.current), 600);
       }
     } else {
+      asteroidEl.style.border = '3px solid #c62828';
+      asteroidEl.style.boxShadow = '0 0 12px #c62828';
+      setTimeout(() => {
+        asteroidEl.style.border = '';
+        asteroidEl.style.boxShadow = '';
+      }, 600);
       wrongAnswer();
       playSound('wrong');
       speak('Try again');

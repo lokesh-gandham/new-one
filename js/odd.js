@@ -280,7 +280,7 @@ function loadOddLevel() {
   oddState.hoveredTarget = null;
   oddState.particles = [];
 
-  document.getElementById('oddQuestion').innerHTML = '<h3>🎯 ' + q.question + '</h3>';
+  document.getElementById('oddQuestion').innerHTML = '<h3><span class="odd-q-num">Q' + (oddState.current + 1) + '.</span> ' + q.question + '</h3>';
   document.getElementById('oddCount').textContent = 'Q ' + (oddState.current + 1) + '/' + oddQuestions.length;
 
   oddState.bird = {

@@ -125,7 +125,7 @@ document.querySelectorAll('[data-sound-toggle]').forEach(btn => {
 /* ========== BACK BUTTON (goes to menu page) ========== */
 document.querySelectorAll('[data-back]').forEach(btn => {
   btn.addEventListener('click', () => {
-    window.location.href = 'sense-safari-game.html';
+    window.location.href = '../sense-safari-game.html';
   });
 });
 
@@ -165,7 +165,7 @@ function showResult(emoji, title, score, xp, combo, noConfetti) {
   overlay.querySelector('.game-result-score').textContent = '⭐ Score: ' + score + '  |  🔥 Best Combo: x' + combo;
   overlay.classList.add('show');
   overlay.querySelector('[data-play-again]').onclick = function() { window.location.reload(); };
-  overlay.querySelector('[data-go-menu]').onclick = function() { window.location.href = 'sense-safari-game.html'; };
+  overlay.querySelector('[data-go-menu]').onclick = function() { window.location.href = '../sense-safari-game.html'; };
 }
 
 /* ========== CONFETTI ========== */

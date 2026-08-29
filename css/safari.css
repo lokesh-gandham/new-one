@@ -33,7 +33,7 @@ h1,h2,h3,h4,.display,
 }
 h1,.hero-title,.display{font-weight:700;letter-spacing:0.3px;}
 .gc-body h3,.game-title-row h2,.poem-board-title,.game-result-title,
-.cross-title,.cross-wordbank-title,.odd-hud-overlay .odd-question h3,
+.cross-title,.cross-wordbank-title,
 .poem-level-card{font-weight:600;}
 button{font-family:inherit;}
 ::selection{background:var(--gold); color:var(--ink);}
@@ -80,16 +80,16 @@ button{font-family:inherit;}
 .gp-hud .side{display:flex;align-items:center;gap:8px;}
 .gp-back{
   background:linear-gradient(145deg,rgba(240,240,240,0.9),rgba(230,230,230,0.95));
-  border:1px solid var(--edge);color:var(--ink);padding:8px 16px;
-  border-radius:12px;cursor:pointer;font-weight:400;font-size:13px;
+  border:1px solid var(--edge);color:#e65100;padding:8px 16px;
+  border-radius:12px;cursor:pointer;font-weight:600;font-size:16px;
   transition:all .2s;font-family:'Livvic', sans-serif;
   display:flex;align-items:center;gap:6px;
 }
 .gp-back:hover{
   background:var(--cream-deep);
-  border-color:var(--ink-dim);color:var(--ink);
+  border-color:var(--ink-dim);color:#bf360c;
 }
-.gp-back::before{content:"◀";font-size:10px;}
+.gp-back::before{content:"◀";font-size:13px;color:#e65100;}
 
 /* Center section - Stats */
 .gp-hud .side:nth-child(2){
@@ -98,7 +98,7 @@ button{font-family:inherit;}
 .gp-chip{
   background:var(--cream-soft);
   border:2px solid var(--edge);border-radius:12px;
-  padding:8px 14px;font-weight:400;font-size:13px;
+  padding:8px 14px;font-weight:400;font-size:18px;
   display:flex;align-items:center;gap:6px;
   transition:border-color .2s;
   position:relative;
@@ -133,8 +133,12 @@ button{font-family:inherit;}
 }
 
 /* ---------- MAIN MENU ---------- */
-#screen-menu.active{height:100vh;height:100dvh;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;scrollbar-gutter:stable;}
-#screen-menu.active::-webkit-scrollbar{display:none;}
+#screen-menu.active{height:100vh;height:100dvh;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-gutter:stable;
+  scrollbar-width:thin;scrollbar-color:var(--leaf) rgba(120,90,40,0.10);}
+#screen-menu.active::-webkit-scrollbar{width:10px;}
+#screen-menu.active::-webkit-scrollbar-track{background:rgba(120,90,40,0.10);border-radius:999px;}
+#screen-menu.active::-webkit-scrollbar-thumb{background:var(--leaf);border:2px solid transparent;background-clip:content-box;border-radius:999px;}
+#screen-menu.active::-webkit-scrollbar-thumb:hover{background:var(--leaf-dark);border:2px solid transparent;background-clip:content-box;}
 #screen-menu{padding:0 0 60px;}
 .menu-hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 18px 20px;}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:9px;padding:7px 16px;border:1px solid var(--edge);border-radius:999px;
@@ -283,31 +287,55 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink);margin:0 0 20p
 .poem-hud{position:relative;z-index:10;flex-shrink:0;display:flex;justify-content:space-between;align-items:center;
   gap:10px;flex-wrap:wrap;padding:10px 14px 0 20px;}
 .poem-level-card{background:rgba(255,255,255,0.9);border:1px solid var(--edge);border-radius:8px;padding:8px 16px;
-  color:var(--ink);font-weight:400;letter-spacing:1px;font-size:13px;}
+  color:var(--ink);font-weight:600;letter-spacing:1px;font-size:16px;}
 .poem-score-card{background:var(--gold);color:var(--ink);padding:6px 16px;border-radius:20px;font-weight:400;font-size:14px;}
 .poem-play{position:relative;flex:1;min-height:0;overflow:hidden;}
 
-.poem-board{position:absolute;left:20px;top:10px;transform:none;width:min(42%,440px);min-width:280px;max-width:440px;
-  background:rgba(255,255,255,0.95);border:1px solid var(--edge);border-radius:12px;padding:20px 24px;
+/* The poem card scales with the space it has (height AND width) so a long
+   mission never spills past the bottom of the play area, and no line has to
+   wrap onto an extra row. All three values cap at the original design sizes. */
+.poem-board{position:absolute;left:20px;top:10px;transform:none;width:min(45%,500px);min-width:270px;max-width:500px;
+  max-height:calc(100% - 16px);
+  --poem-max:26px;
+  --poem-fs:clamp(14px, min(1.42vw, 2.7vh), var(--poem-max));
+  background:rgba(255,255,255,0.95);border:1px solid var(--edge);border-radius:12px;
+  padding:clamp(10px,1.9vh,20px) clamp(13px,1.75vw,24px);
   box-shadow:0 4px 16px rgba(0,0,0,0.08);z-index:6;}
-.poem-board-title{color:var(--ink);font-size:20px;font-weight:400;margin-bottom:14px;
-  border-bottom:1px solid rgba(227,159,10,0.3);padding-bottom:8px;line-height:1.3;}
-.poem-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:22px;color:var(--ink);
-  margin-bottom:14px;line-height:1.5;font-family:'Livvic', sans-serif;font-weight:400;}
-.poem-blank-slot{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
-  min-width:95px;height:34px;border-bottom:2px solid var(--edge);
+.poem-board-title{color:var(--ink);font-size:calc(var(--poem-fs) * 0.93);font-weight:400;
+  margin-bottom:clamp(5px,1.4vh,14px);
+  border-bottom:1px solid rgba(227,159,10,0.3);padding-bottom:clamp(3px,0.85vh,8px);line-height:1.3;}
+.poem-line{display:flex;flex-wrap:wrap;align-items:center;gap:4px calc(var(--poem-fs) * 0.3);
+  font-size:var(--poem-fs);color:var(--ink);
+  margin-bottom:clamp(5px,1.4vh,14px);line-height:1.4;font-family:'Livvic', sans-serif;font-weight:400;}
+.poem-line:last-child{margin-bottom:0;}
+.poem-line > span:not(.poem-blank-slot){white-space:nowrap;}
+.poem-blank-slot{display:inline-flex;align-items:center;justify-content:center;flex:0 1 auto;
+  min-width:calc(var(--poem-fs) * 2.9);height:calc(var(--poem-fs) * 1.46);border-bottom:2px solid var(--edge);
   background:rgba(0,0,0,0.04);color:var(--ink);font-weight:400;text-align:center;
-  border-radius:4px;padding:0 8px;font-family:'Livvic', sans-serif;vertical-align:middle;font-size:18px;}
+  border-radius:4px;padding:0 calc(var(--poem-fs) * 0.3);font-family:'Livvic', sans-serif;vertical-align:middle;
+  font-size:var(--poem-fs);white-space:nowrap;}
 .poem-blank-slot.active{border-color:var(--gold);background:rgba(241,196,15,0.2);
   box-shadow:0 0 8px rgba(241,196,15,0.5);animation:poemGlow 1s infinite alternate;}
 @keyframes poemGlow{0%{transform:scale(1);}100%{transform:scale(1.05);}}
 .poem-blank-slot.correct{background:rgba(46,204,113,0.3);border-color:var(--success);}
+/* Size the poem text against the card's own width — that is what decides
+   whether a line wraps — with a viewport-height guard so a long mission still
+   clears the bottom of the play area. */
+@supports (container-type: inline-size){
+  .poem-board{container-type:inline-size;}
+  .poem-board > *{--poem-fs:clamp(14px, min(5.1cqw, 3.4vh), var(--poem-max));}
+}
 @media(max-width:800px){
   .poem-board{width:90%;max-width:none;top:10px;bottom:auto;max-height:40%;}
-  .poem-asteroid{z-index:5;gap:3px;}
-  .poem-ast-img{width:38px;height:38px;}
-  .poem-ast-icon{font-size:32px;}
-  .poem-ast-word{font-size:13px;padding:3px 9px;}
+  /* Narrow screens: stack the board and the option grid in normal flow so
+     nothing can overlap; the play area scrolls if it runs out of height. */
+  .poem-board{position:static;width:auto;max-width:none;max-height:none;margin:8px 8px 0;
+    --poem-max:22px;}
+  .poem-play{overflow-y:auto;overflow-x:hidden;}
+  .poem-play .poem-asteroids{position:static;inset:auto;height:auto;width:auto;
+    container-type:normal;grid-template-columns:repeat(4, minmax(0, 1fr));
+    margin:10px 8px 80px;gap:14px 10px;align-content:flex-start;}
+  .poem-play .poem-asteroid{z-index:5;gap:3px;--ast-img:38px;--ast-font:13px;}
 }
 
 .poem-slingshot{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);width:40px;height:50px;z-index:8;pointer-events:none;}
@@ -318,28 +346,80 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink);margin:0 0 20p
 .poem-slingshot-fork-l{left:-8px;transform:rotate(-15deg);}
 .poem-slingshot-fork-r{right:-8px;transform:rotate(15deg);}
 
-.poem-laser{position:absolute;width:6px;background:var(--gold);
-  box-shadow:0 0 10px var(--gold),0 0 20px var(--gold),0 0 40px var(--gold);z-index:15;display:none;border-radius:3px;transform-origin:bottom center;}
+.poem-laser{position:absolute;width:9px;
+  background:linear-gradient(180deg,#fffbe6,#ffd400 40%,#ffb300);
+  box-shadow:0 0 14px #ffd400,0 0 28px #ffd400,0 0 54px rgba(255,196,0,0.9);z-index:15;display:none;border-radius:4px;transform-origin:bottom center;}
 @keyframes laserShoot{0%{clip-path:inset(100% 0 0 0);}100%{clip-path:inset(0 0 0 0);}}
-.poem-aim-line{position:absolute;width:2px;border-left:2px dashed rgba(20,86,50,0.35);
-  z-index:1;pointer-events:none;}
+.poem-aim-line{position:absolute;width:0;border-left:3px dashed rgba(255,193,7,0.85);
+  box-shadow:0 0 8px rgba(255,193,7,0.55);z-index:6;pointer-events:none;}
 .poem-target-marker{position:absolute;width:58px;height:58px;border:2px dashed var(--gold);
   border-radius:50%;z-index:15;transform:translate(-50%,-50%);display:none;
   pointer-events:none;animation:poemSpin 3s linear infinite;}
 @keyframes poemSpin{100%{transform:translate(-50%,-50%) rotate(360deg);}}
 
-.poem-asteroid{position:absolute;width:auto;min-width:0;height:auto;padding:0;
+/* Option chips: a responsive wrapping grid that fills the area beside the
+   poem board. Chips flow and wrap with a real gap (instead of being placed
+   one-by-one with absolute left/top), so they can never collide as the
+   viewport width shrinks. Visual design of each chip is unchanged. */
+.poem-asteroids{
+  position:absolute;
+  top:6px;
+  right:10px;
+  bottom:clamp(52px, 9vh, 78px);
+  /* always clears the poem card (which is min(45%,500px) wide + 20px left) */
+  left:clamp(288px, calc(45% + 34px), 534px);
+  /* Fixed 4-column grid: the options always read as two tidy rows, and the
+     chips scale (never scroll) as the viewport gets shorter or narrower. */
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+  align-content:center;
+  justify-items:center;
+  align-items:center;
+  gap:clamp(4px, 1.4vh, 24px) clamp(6px, 1.2vw, 18px);
+  overflow:hidden;
+  z-index:4;
+}
+
+.poem-asteroid{position:static;width:auto;height:auto;padding:0;
+  min-width:0;max-width:100%;
+  /* Every chip dimension derives from these two. Fallback sizing keys off the
+     viewport; the @supports block below keys off the grid's own box, which is
+     what actually has to hold the chips. Both cap at the original
+     80px / 24px, so roomy screens look exactly as before. */
+  --ast-max:80px;
+  --ast-font-max:24px;
+  --ast-img:clamp(34px, min(5.6vw, 7.2vh), var(--ast-max));
+  --ast-font:clamp(11px, min(1.3vw, 1.8vh), var(--ast-font-max));
   background:none;border:none;border-radius:0;box-shadow:none;
-  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;
   color:var(--ink);font-weight:400;font-family:'Livvic', sans-serif;
-  cursor:pointer;z-index:4;transition:transform .1s ease;}
-.poem-asteroid:hover{transform:scale(1.1);}
-.poem-ast-img{width:52px;height:52px;object-fit:contain;margin:0;flex-shrink:0;
+  cursor:pointer;z-index:4;}
+/* higher specificity than the laptop-only nudge below so the chips stay put */
+.poem-play .poem-asteroid{transform:none;}
+/* Size the chips against the grid box itself (two rows), so they always fill
+   the space available and never overflow it — whatever the laptop's height. */
+@supports (container-type: size){
+  .poem-asteroids{container-type:size;}
+  .poem-asteroid{
+    --ast-img:clamp(34px, min(23cqh, 16cqw), var(--ast-max));
+    --ast-font:clamp(11px, min(5.5cqh, 4.5cqw), var(--ast-font-max));
+  }
+}
+.poem-ast-img{width:var(--ast-img);height:var(--ast-img);object-fit:contain;margin:0;flex-shrink:0;
   filter:drop-shadow(0 3px 6px rgba(0,0,0,0.22));}
-.poem-ast-icon{font-size:44px;line-height:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));}
-.poem-ast-word{font-size:15px;font-weight:600;color:var(--ink);white-space:nowrap;
+.poem-ast-img-lg{width:calc(var(--ast-img) * 1.375);height:calc(var(--ast-img) * 1.375);}
+.poem-ast-img-xl{width:calc(var(--ast-img) * 1.5);height:calc(var(--ast-img) * 1.5);}
+.poem-ast-img-sm{width:calc(var(--ast-img) * 0.75);height:calc(var(--ast-img) * 0.75);}
+/* Emoji fallback chips (words with no PNG, e.g. "wind"). Reserve the same
+   square box the images get: emoji glyphs paint outside their em box, so a
+   bare line-height:1 span lets the glyph spill onto the label below it. */
+.poem-ast-icon{width:var(--ast-img);height:var(--ast-img);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:calc(var(--ast-img) * 0.8);line-height:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));}
+.poem-ast-word{font-size:var(--ast-font);font-weight:400;color:var(--ink);white-space:nowrap;text-transform:capitalize;
   background:linear-gradient(145deg,#fffdf8,var(--cream-deep));
-  border:1px solid var(--edge);border-radius:14px;padding:4px 12px;
+  border:1px solid var(--edge);border-radius:14px;
+  padding:calc(var(--ast-font) * 0.17) calc(var(--ast-font) * 0.5);
   box-shadow:0 2px 8px rgba(0,0,0,0.12);}
 
 /* Large external monitors only — laptop widths (<=1600px) are untouched.
@@ -483,7 +563,7 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink);margin:0 0 20p
 .hidden-letter{color:var(--ink);opacity:0.4;}
 .float-banner.correct{background:linear-gradient(135deg,#2ecc71,#a8f0bd);color:var(--ink);}
 .float-banner.wrong{background:linear-gradient(135deg,#ff6b6b,#ffc0c0);color:var(--ink);}
-.float-banner.correct,.float-banner.wrong{top:50%;font-size:22px;padding:18px 34px;}
+.float-banner.correct,.float-banner.wrong{top:50%;font-size:32px;padding:28px 50px;}
 .float-banner.correct.show,.float-banner.wrong.show{transform:translate(-50%,-50%);}
 
 .crossword-actions{flex-shrink:0;text-align:center;padding-top:4px;}
@@ -520,14 +600,15 @@ p.hero-subtitle{font-size:clamp(15px,2.4vw,19px);color:var(--ink);margin:0 0 20p
 /* Odd canvas game */
 .odd-stage{position:relative;width:100%;flex:1 1 0;min-height:0;padding:0;overflow:hidden;background:rgba(255,255,255,0.72);border:1px solid var(--edge);border-radius:20px;}
 .odd-stage canvas{display:block;width:100%;height:100%;border-radius:17px;cursor:pointer;}
-.odd-hud-overlay{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;z-index:10;}
+.odd-hud-overlay{position:absolute;top:12%;left:26px;right:8px;display:flex;justify-content:flex-start;align-items:flex-start;pointer-events:none;z-index:10;}
 .odd-hud-overlay .odd-question{
   pointer-events:auto;
-  background:rgba(255,255,255,0.93);
-  border:1px solid var(--edge);border-radius:10px;padding:8px 14px;
-  max-width:400px;backdrop-filter:blur(8px);
+  background:transparent;
+  border:none;border-radius:0;padding:4px 2px;
+  max-width:60%;
 }
-.odd-hud-overlay .odd-question h3{margin:0;font-size:14px;color:var(--ink);letter-spacing:.3px;}
+.odd-hud-overlay .odd-question h3{margin:0;font-size:24px;font-weight:400;color:var(--ink);letter-spacing:.3px;}
+.odd-hud-overlay .odd-question .odd-q-num{font-weight:400;margin-right:4px;}
 .odd-instruction{
   position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
   background:rgba(255,255,255,0.93);border:1px solid var(--edge);
@@ -582,7 +663,7 @@ h1.hero-title{font-size:clamp(40px,7.5vw,62px);line-height:1.04;font-weight:700;
 /* — HEADING: card titles & in-game section titles — 600, medium */
 .gc-body h3{font-size:clamp(20px,2.1vw,24px);font-weight:600;letter-spacing:.2px;margin:0 0 6px;}
 .game-title-row h2{font-size:clamp(19px,2.4vw,23px);font-weight:600;}
-.poem-board-title{font-size:clamp(18px,2vw,21px);font-weight:400;margin-bottom:14px;}
+.poem-board-title{font-weight:400;}
 .cross-wordbank-title{font-size:16px;font-weight:600;}
 .game-result-title{font-size:23px;font-weight:600;}
 
@@ -593,16 +674,16 @@ h1.hero-title{font-size:clamp(40px,7.5vw,62px);line-height:1.04;font-weight:700;
 .odd-instruction{
   color:var(--ink);font-weight:400;letter-spacing:.2px;
 }
-.cross-title{font-size:13.5px;}
+.cross-title{font-size:18px;}
 #poemInstruction{font-size:13px;background:var(--cream-deep);border-color:var(--edge);color:var(--ink);}
-.odd-hud-overlay .odd-question h3{font-size:15px;}
+.odd-hud-overlay .odd-question h3{font-size:23px;font-weight:400;}
 .odd-instruction{font-size:12.5px;}
 
 /* — BODY: descriptions & poem lines — 400, calm, roomy */
 .hero-subtitle{font-size:clamp(14px,1.9vw,17px);font-weight:400;color:var(--ink-dim);letter-spacing:.3px;}
 .gc-body p{font-size:15.5px;font-weight:400;line-height:1.55;color:var(--ink-dim);margin:0 0 14px;}
 .game-title-row p{font-size:13px;font-weight:400;color:var(--ink-dim-2);}
-.poem-line{font-size:clamp(17px,2vw,21px);font-weight:400;line-height:1.5;}
+.poem-line{font-weight:400;}
 
 /* — META: tags, counters, timers — small, quiet, 500 */
 .gc-tag{font-size:11.5px;font-weight:600;padding:5px 11px;}
@@ -626,7 +707,7 @@ h1.hero-title{font-size:clamp(40px,7.5vw,62px);line-height:1.04;font-weight:700;
 
 /* Poem Blaster — free-standing picture with the word on a small pill below it */
 .poem-asteroid{
-  flex-direction:column;gap:6px;min-width:0;width:auto;height:auto;
+  flex-direction:column;gap:1px;min-width:0;width:auto;height:auto;
   padding:0;background:none;border:none;box-shadow:none;
   line-height:1;font-weight:400;text-align:center;
 }
@@ -698,7 +779,7 @@ h1.hero-title{font-size:clamp(40px,7.5vw,62px);line-height:1.04;font-weight:700;
 .poem-asteroid{background:none;border:none;}
 .poem-ast-word{background:linear-gradient(145deg,#fffdf8,var(--cream-deep));border-color:var(--edge);}
 .odd-stage{background:rgba(255,252,244,0.82);border-color:var(--edge);}
-.odd-hud-overlay .odd-question,.odd-instruction{background:rgba(255,252,244,0.94);border-color:var(--edge);}
+.odd-instruction{background:rgba(255,252,244,0.94);border-color:var(--edge);}
 
 /* ============================================================
    FEEDBACK POPUPS — vivid, consistent correct / wrong colouring
@@ -765,11 +846,11 @@ h1.hero-title{font-size:clamp(40px,7.5vw,62px);line-height:1.04;font-weight:700;
 
   /* --- Question headings: scaled up modestly (not oversized) --- */
   .cross-header{gap:12px;align-items:center;}
-  .cross-title{font-size:26px;line-height:1.3;}
+  .cross-title{font-size:30px;line-height:1.3;}
   .cross-progress{font-size:18px;padding:7px 16px;}
   #poemInstruction{font-size:24px;}
   .odd-hud-overlay .odd-question{max-width:none;}
-  .odd-hud-overlay .odd-question h3{font-size:24px;}
+  .odd-hud-overlay .odd-question h3{font-size:28px;font-weight:400;}
 
   /* --- Crossword: bigger grid + clue pictures, layout centred --- */
   .cross-layout{gap:60px;align-items:center;}
@@ -789,10 +870,14 @@ h1.hero-title{font-size:clamp(40px,7.5vw,62px);line-height:1.04;font-weight:700;
   .cross-word-check{font-size:22px;}
   .cross-letter-popout button{width:52px;height:52px;font-size:28px;}
 
-  /* --- Poem Blaster: bigger art, modestly scaled word options --- */
-  .poem-ast-img{width:88px;height:88px;}
-  .poem-ast-icon{font-size:72px;}
-  .poem-ast-word{font-size:22px;padding:6px 16px;}
-  .poem-board-title{font-size:24px;}
-  .poem-line{font-size:24px;}
+  /* --- Poem Blaster: bigger art, modestly scaled word options.
+         Raises the caps only — the chips still shrink to fit a short window. */
+  .poem-asteroid{--ast-max:88px;--ast-font-max:26px;}
+  .poem-board{--poem-max:24px;}
+}
+
+/* Laptop screens - keep the option grid vertically centred beside the board.
+   (The old absolute-nudge is no longer needed now the chips are a flex grid.) */
+@media(min-width:1024px) and (max-width:1600px){
+  .poem-asteroids{align-content:center;}
 }

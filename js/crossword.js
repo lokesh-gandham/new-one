@@ -76,7 +76,6 @@ function renderCrossword() {
   var html = '';
   html += '<div class="cross-header">';
   html += '<div class="cross-title">🧩 Use the pictures as clues and complete the crossword puzzle.</div>';
-  html += '<div class="cross-progress" id="crossCount">' + crossState.solved + '/' + crossState.total + ' Words</div>';
   html += '</div>';
 
   html += '<div class="cross-layout">';

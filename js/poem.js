@@ -1,6 +1,6 @@
 /* ========== GAME 1: POEM BLASTER (SHOOTING STYLE) ========== */
 const poemLevels = [
-  { title: 'Mission 1: The Smelling Poem', icon: '👃', sense: 'nose',
+  { title: 'Mission 1: The Smelling Poem', icon: '<img src="../assets/cw-nose.png" alt="nose" style="height:24px;vertical-align:middle">', sense: 'nose',
     answers: ['nose','flowers','smell','fresh'],
     lines: [
       ['I have a ', '<BLANK>', ' to smell,'],
@@ -8,7 +8,7 @@ const poemLevels = [
       ['I ', '<BLANK>', ' the food so nice,'],
       ['And the air, ', '<BLANK>', ' and hasty.']
     ]},
-  { title: 'Mission 2: The Seeing Poem', icon: '👁️', sense: 'eyes',
+  { title: 'Mission 2: The Seeing Poem', icon: '<img src="../assets/body-parts (3).png" alt="body parts" style="height:24px;vertical-align:middle">', sense: 'eyes',
     answers: ['see','birds','Sun','night'],
     lines: [
       ['I have two eyes to ', '<BLANK>', ','],
@@ -32,16 +32,28 @@ const POEM_IMAGES = {
   cloud: '../assets/cloud-removebg-preview.png',
   smell: '../assets/smell-removebg-preview.png',
   bird: '../assets/bird-removebg-preview.png',
-  birds: '../assets/bird-removebg-preview.png',
+  birds: '../assets/birds-removebg-preview.png',
   rock: '../assets/rock-removebg-preview.png',
   fish: '../assets/fish-removebg-preview.png',
-  rain: '../assets/rain-removebg-preview.png'
+  rain: '../assets/rain-removebg-preview.png',
+  see: '../assets/body-parts (3).png',
+  eyes: '../assets/body-parts (3).png',
+  sky: '../assets/sky.png',
+  wave: '../assets/wave.png',
+  nose: '../assets/cw-nose.png',
+  leaf: '../assets/leaf-removebg-preview.png',
+  flower: '../assets/flower-removebg-preview.png',
+  flowers: '../assets/flower-removebg-preview.png',
+  moon: '../assets/moon-removebg-preview.png',
+  fresh: '../assets/freshair-removebg-preview.png',
+  night: '../assets/night__1_-removebg-preview.png'
 };
 
 function poemIconHTML(word) {
   const w = String(word).toLowerCase();
   if (POEM_IMAGES[w]) {
-    return `<img src="${POEM_IMAGES[w]}" alt="${w}" class="poem-ast-img">`;
+    const extraClass = (w === 'flower' || w === 'flowers') ? ' poem-ast-img-lg' : (w === 'fresh' ? ' poem-ast-img-xl' : (w === 'nose' ? ' poem-ast-img-sm' : ''));
+    return `<img src="${POEM_IMAGES[w]}" alt="${w}" class="poem-ast-img${extraClass}">`;
   }
   return `<span class="poem-ast-icon">${POEM_ICONS[w] || '✨'}</span>`;
 }
@@ -114,8 +126,7 @@ function renderPoemLevel(li) {
   requestAnimationFrame(layoutPoemAsteroids);
 
   document.getElementById('poemInstruction').textContent = `🎯 Shoot word for slot #1`;
-  document.getElementById('poemGameScore').textContent = G.score;
-  
+
   setupPoemAimLine();
   startPoemTimer();
 }
@@ -130,7 +141,7 @@ function layoutPoemAsteroids() {
   if (!chips.length) return;
   const board = document.getElementById('poemBoard');
   const aw = area.clientWidth, ah = area.clientHeight;
-  const pad = 12, bottomSafe = 70;
+  const pad = 12, bottomSafe = 96;
   const boardRight = board ? board.offsetLeft + board.offsetWidth : 0;
   const boardBottom = board ? board.offsetTop + board.offsetHeight : 0;
 
@@ -195,7 +206,9 @@ window.addEventListener('resize', () => {
 
 function getDistractors(answers) {
   const extras = ['tree','wind','rain','sun','moon','sky','bird','fish','leaf','rock','wave','cloud'];
-  return shuffle(extras).slice(0, 4);
+  const answerSet = new Set(answers.map(a => a.toLowerCase()));
+  const filtered = extras.filter(e => !answerSet.has(e.toLowerCase()));
+  return shuffle(filtered).slice(0, 4);
 }
 
 function getPoemPlayArea() {
@@ -215,14 +228,7 @@ function setupPoemAimLine() {
     mouseX = Math.max(slingW / 2, Math.min(rect.width - slingW / 2, mouseX));
 
     const bottomY = rect.height - 55;
-    let lineTop = 8;
-
-    const hovered = document.elementFromPoint(e.clientX, e.clientY);
-    if (hovered && hovered.classList && hovered.classList.contains('poem-asteroid')) {
-      const ar = hovered.getBoundingClientRect();
-      const centerY = (ar.top + ar.height / 2) - rect.top;
-      if (centerY < bottomY - 30) lineTop = centerY;
-    }
+    const lineTop = 8;
 
     aimLine.style.left = mouseX + 'px';
     aimLine.style.top = lineTop + 'px';
@@ -273,7 +279,7 @@ function shootPoemAsteroid(asteroidEl, word) {
   laser.style.display = 'block';
   laser.style.animation = 'none';
   laser.offsetHeight;
-  laser.style.animation = 'laserShoot 0.25s ease-out';
+  laser.style.animation = 'laserShoot 0.3s ease-out';
   
   setTimeout(() => {
     laser.style.display = 'none';
@@ -297,7 +303,6 @@ function shootPoemAsteroid(asteroidEl, word) {
       addScore(100);
       playSound('correct');
       speak('Correct!');
-      document.getElementById('poemGameScore').textContent = G.score;
       showPoemMessage(`⚡ "${word}" slotted!`, 2000, 'correct');
       
       poemState.currentSlot++;
@@ -321,7 +326,7 @@ function shootPoemAsteroid(asteroidEl, word) {
       speak('Try again');
       showPoemMessage('❌ Wrong word for this slot!', 1200, 'wrong');
     }
-  }, 120);
+  }, 320);
 }
 
 function showPoemMessage(text, duration, type) {
